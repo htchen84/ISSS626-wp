@@ -4,6 +4,16 @@ project:
 website:
   title: "ISSS626-wp"
   navbar:
+    right: 
+    - text: "Hands-on Exercise"
+          menu:
+      - text:"Hands-on Exercise1"
+        href: "Hands-on_Ex/Hands-on_Ex01/Hands-on_Ex01.html"
+      - text:"Hands-on Exercise1"
+        href: "Hands-on_Ex/Hands-on_Ex01/Hands-on_Ex01.html"
+    - text: "In-class Exercise"
+    - text: "Take-home exercise"
+
     left:
       - href: index.qmd
         text: Home
@@ -12,7 +22,7 @@ website:
 format:
   html:
     theme:
-      - cosmo
+      - flatly
       - brand
     css: styles.css
     toc: true

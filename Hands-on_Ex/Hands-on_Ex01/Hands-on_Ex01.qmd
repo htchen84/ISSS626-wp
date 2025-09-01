@@ -1,5 +1,30 @@
 ---
 title: "Hands-on Exercise 1"
+author: "HTC"
+date: "September, 2025"
+date-modified: "last-modi"
+format: 
+  html:
+    toc-depth: 4
+    toc-expand: true
+execute: 
+  eval: true
+  echo: true
+  warning: false
+  freeze: true
+---
+
+# Overview
+
+This is hands-on Exercise 1
+
+## Getting started
+
+```{r}
+pacman::p_load{sf, tidyverse}
+```
+
+### Importing data
 ---
 
 elcome to ISSS626 Geospatial Analytics and Application
