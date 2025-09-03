@@ -4,17 +4,17 @@ project:
 website:
   title: "ISSS626-wp"
   navbar:
-    right: 
+    left: 
     - text: "Hands-on Exercise"
-          menu:
-      - text:"Hands-on Exercise1"
+      menu:
+      - text: "Hands-on Exercise1"
         href: "Hands-on_Ex/Hands-on_Ex01/Hands-on_Ex01.html"
-      - text:"Hands-on Exercise1"
-        href: "Hands-on_Ex/Hands-on_Ex01/Hands-on_Ex01.html"
+      - text: "Hands-on Exercise2"
+        href: "Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html"
     - text: "In-class Exercise"
     - text: "Take-home exercise"
 
-    left:
+    right:
       - href: index.qmd
         text: Home
       - about.qmd
