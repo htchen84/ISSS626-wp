@@ -16,7 +16,7 @@ execute:
 
 # Overview
 
-This is hands-on Exercise 1
+This is hands-on Exercise 1.1
 
 ## Getting started
 
@@ -224,6 +224,440 @@ ggplot(data=mpsz,
   labs(title = "",
       x = "Pre-school density (per km sq)",
       y = "Pre-school count")
+```
+
+# Overview
+
+This is hands-on Exercise 2.1
+
+## Getting started
+
+```{r}
+pacman::p_load(sf, tmap, tidyverse, rvest)
+```
+
+```{r}
+setwd("C:/Users/HT Chen/Desktop/ISSS626/ISSS626-wp/Hands-on_Ex/Hands-on_Ex02")
+mpsz <- st_read("data2/geospatial/MasterPlan2019SubzoneBoundaryNoSeaKML.kml")
+```
+
+```{r}
+extract_kml_field <- function(html_text, field_name) {
+  if (is.na(html_text) || html_text == "") return(NA_character_)
+  
+  page <- read_html(html_text)
+  rows <- page %>% html_elements("tr")
+  
+  value <- rows %>%
+    keep(~ html_text2(html_element(.x, "th")) == field_name) %>%
+    html_element("td") %>%
+    html_text2()
+  
+  if (length(value) == 0) NA_character_ else value
+}
+```
+
+```{r}
+                                   # where R is looking from
+mpsz <- mpsz %>%
+  mutate(
+    REGION_N = map_chr(Description, extract_kml_field, "REGION_N"),
+    PLN_AREA_N = map_chr(Description, extract_kml_field, "PLN_AREA_N"),
+    SUBZONE_N = map_chr(Description, extract_kml_field, "SUBZONE_N"),
+    SUBZONE_C = map_chr(Description, extract_kml_field, "SUBZONE_C")
+  ) %>%
+  select(-Name, -Description) %>%
+  relocate(geometry, .after = last_col())
+```
+
+```{r}
+mpsz
+```
+
+```{r}
+setwd("C:/Users/HT Chen/Desktop/ISSS626/ISSS626-wp/Hands-on_Ex/Hands-on_Ex02")
+popdata <- read_csv("data2/respopagesextod2024.csv")
+```
+
+`{r setup, include=FALSE} knitr::opts_chunk$set(root.dir = "C:/path/to/your/project")`
+
+```         
+```
+
+```{r}
+popdata2024 <- popdata %>%
+  group_by(PA, SZ, AG) %>%
+  summarise(`POP` = sum(`Pop`)) %>%
+  ungroup()%>%
+  pivot_wider(names_from=AG, 
+              values_from=POP) %>%
+  mutate(YOUNG = rowSums(.[3:6])
+         +rowSums(.[12])) %>%
+mutate(`ECONOMY ACTIVE` = rowSums(.[7:11])+
+rowSums(.[13:15]))%>%
+mutate(`AGED`=rowSums(.[16:21])) %>%
+mutate(`TOTAL`=rowSums(.[3:21])) %>%  
+mutate(`DEPENDENCY` = (`YOUNG` + `AGED`)
+/`ECONOMY ACTIVE`) %>%
+  select(`PA`, `SZ`, `YOUNG`, 
+       `ECONOMY ACTIVE`, `AGED`, 
+       `TOTAL`, `DEPENDENCY`)
+```
+
+```{r}
+popdata2024 <- popdata2024 %>%
+  mutate_at(.vars = vars(PA, SZ), 
+          .funs = list(toupper)) %>%
+  filter(`ECONOMY ACTIVE` > 0)
+
+```
+
+```{r}
+mpsz_pop2024 <- left_join(mpsz, popdata2024,
+                          by = c("SUBZONE_N" = "SZ"))
+```
+
+```{r}
+setwd("C:/Users/HT Chen/Desktop/ISSS626/ISSS626-wp/Hands-on_Ex/Hands-on_Ex02")
+write_rds(mpsz_pop2024, "data2/rds/mpsz_pop2024.rds")
+```
+
+```{r}
+tmap_mode("plot")
+qtm(shp = mpsz_pop2024, 
+    fill = "DEPENDENCY")
+```
+
+```{r}
+tm_shape(mpsz_pop2024) +
+  tm_polygons(fill = "DEPENDENCY",
+              fill.scale = tm_scale_intervals(
+                style = "quantile", 
+                n = 5,
+                values = "brewer.blues"),
+              fill.legend = tm_legend(
+                title = "Dependency ratio")) +
+  tm_title("Distribution of Dependency Ratio by planning subzone") +
+  tm_layout(frame = TRUE) +
+  tm_borders(fill_alpha = 0.5) +
+  tm_compass(type="8star", size = 2) +
+  tm_scalebar() +
+  tm_grid(alpha =0.2) +
+  tm_credits("Source: Planning Sub-zone boundary from Urban Redevelopment Authorithy (URA)\n and Population data from Department of Statistics DOS", 
+             position = c("left", "bottom"))
+```
+
+```{r}
+tm_shape(mpsz_pop2024) +
+  tm_polygons()
+```
+
+```{r}
+tm_shape(mpsz_pop2024)+
+  tm_polygons(fill = "DEPENDENCY")
+```
+
+```{r}
+tm_shape(mpsz_pop2024)+
+  tm_fill("DEPENDENCY")
+```
+
+```{r}
+tm_shape(mpsz_pop2024)+
+  tm_fill("DEPENDENCY") +
+  tm_borders()
+```
+
+```{r}
+tm_shape(mpsz_pop2024)+
+  tm_fill("DEPENDENCY") +
+  tm_borders(col = "grey60",
+             lwd = 0.1,
+             lty = "dashed")
+```
+
+```{r}
+tm_shape(mpsz_pop2024) +
+  tm_polygons(fill = "DEPENDENCY",
+              fill.scale = tm_scale_intervals(
+                style = "quantile",
+                n = 5)) +
+  tm_borders(fill_alpha = 0.5)
+```
+
+```{r}
+tm_shape(mpsz_pop2024) +
+  tm_polygons(fill = "DEPENDENCY",
+              fill.scale = tm_scale_intervals(
+                style = "equal",
+                n = 5)) +
+  tm_borders(fill_alpha = 0.5)
+```
+
+```{r}
+summary(mpsz_pop2024$DEPENDENCY)
+```
+
+```{r}
+tm_shape(mpsz_pop2024)+
+  tm_polygons(fill = "DEPENDENCY",
+              fill.scale = tm_scale_intervals(
+                breaks = c(0, 0.60, 0.70, 0.80, 0.90, 1.00))) +
+  tm_borders(fill_alpha = 0.5)
+```
+
+```{r}
+tm_shape(mpsz_pop2024) +
+  tm_polygons(fill = "DEPENDENCY",
+              fill.scale = tm_scale_intervals(
+                style = "quantile",
+                n = 5,
+                values = "brewer.greens")) +
+  tm_borders(fill_alpha = 0.5)
+```
+
+```{r}
+tm_shape(mpsz_pop2024) +
+  tm_polygons(fill = "DEPENDENCY",
+              fill.scale = tm_scale_intervals(
+                style = "quantile",
+                n = 5,
+                values = "-brewer.greens")) +
+  tm_borders(fill_alpha = 0.5)
+```
+
+```{r}
+tm_shape(mpsz_pop2024) +
+  tm_polygons(fill = "DEPENDENCY",
+              fill.scale = tm_scale_intervals(
+                style = "quantile",
+                n = 5)) +
+  tm_borders(fill_alpha = 0.5) +
+  tm_compass(type="8star", size = 2) +
+  tm_scalebar() +
+  tm_grid(lwd = 0.1, alpha = 0.2) +
+  tm_credits("Source: data.gov.sg & singstat",
+             position = c("left", "bottom"))
+```
+
+```{r}
+tm_shape(mpsz_pop2024) +
+  tm_polygons(fill = "DEPENDENCY",
+              fill.scale = tm_scale_intervals(
+                style = "quantile",
+                n = 5),
+              fill.legend = tm_legend(
+                title = "Dependency ratio")) +
+  tm_pos_auto_in() +
+  tm_borders(fill_alpha = 0.5) +
+  tm_compass(type="8star", size = 2) +
+  tm_scalebar() +
+  tm_grid(lwd = 0.1, alpha = 0.2) +
+  tm_credits("Source: data.gov.sg & singstat",
+             position = c("left", "bottom"))
+```
+
+```{r}
+tm_shape(mpsz_pop2024) +
+  tm_polygons(fill = "DEPENDENCY",
+              fill.scale = tm_scale_intervals(
+                style = "quantile",
+                n = 5,
+                values = "-brewer.greens")) + 
+  tm_borders(fill_alpha = 0.5) + 
+  tmap_style("natural")
+```
+
+```{r}
+tmap_style("white")
+```
+
+```{r}
+tm_shape(mpsz_pop2024) + 
+  tm_polygons(
+    fill = c("YOUNG", "AGED"),
+    fill.legend = 
+      tm_legend(position = tm_pos_in(
+        "right", "bottom")),
+    fill.scale = tm_scale_intervals(
+      style = "equal", 
+      n = 5,
+      values = "brewer.blues")) +
+  tm_borders(fill_alpha = 0.5) +
+  tmap_style("natural")
+```
+
+```{r}
+youngmap <- tm_shape(mpsz_pop2024)+ 
+  tm_polygons(fill = "YOUNG",
+              fill.legend = tm_legend(
+                position = tm_pos_in(
+                  "right", "bottom"),
+                  item.height = 0.8),
+              fill.scale = tm_scale_intervals(
+                style = "quantile", 
+                values = "brewer.blues")) +
+  tm_borders(fill_alpha = 0.5) +
+  tm_title("Distribution of young population")
+                
+agedmap <- tm_shape(mpsz_pop2024)+ 
+  tm_polygons(fill = "AGED",
+              fill.legend = tm_legend(
+                position = tm_pos_in(
+                  "right", "bottom"),
+                item.height = 0.8),
+              fill.scale = tm_scale_intervals(
+              style = "quantile", 
+              values = "brewer.blues")) +
+  tm_borders(fill_alpha = 0.5) +
+  tm_title("Distribution of aged population")
+
+tmap_arrange(youngmap, agedmap, asp=1, ncol=2)
+```
+
+```{r}
+tm_shape(mpsz_pop2024) +
+  tm_fill(fill = "DEPENDENCY",
+          fill.scale = tm_scale_intervals(
+            style = "quantile",
+            values = "brewer.blues")) + 
+  tm_facets(by = "REGION_N",
+            nrow = 2, 
+            ncols = 3,
+            free.coords=TRUE, 
+            drop.units=TRUE) +
+  tm_layout(legend.show = TRUE,
+            title.position = c("center", "center"), 
+            title.size = 20) +
+  tm_borders(fill_alpha = 0.5)
+```
+
+```{r}
+mpsz_pop2024 %>%
+  filter(REGION_N == "CENTRAL REGION") %>%
+  tm_shape() +
+  tm_polygons(fill = "DEPENDENCY",
+              fill.scale = tm_scale_intervals(
+                style = "quantile", 
+                values = "brewer.greens"),
+              fill.legend = tm_legend()) +
+  tm_borders(fill_alpha = 0.5)
+```
+
+```{r}
+mpsz_pop2024 %>%
+  filter(REGION_N == "CENTRAL REGION") %>%
+  tm_shape() +
+  tm_polygons(fill = "DEPENDENCY",
+              fill.scale = tm_scale_intervals(
+                style = "quantile", 
+                values = "brewer.greens"),
+              fill.legend = tm_legend(),
+              fill.chart = tm_chart_box()) +
+  tm_borders() +
+  tm_layout(asp = 0.8)
+```
+
+```{r}
+mpsz_selected <- mpsz_pop2024 %>%
+  filter(REGION_N == "CENTRAL REGION")
+
+stats <- boxplot.stats(mpsz_selected$DEPENDENCY)
+
+outlier_vals <- stats$out
+
+outlier_sf <- mpsz_selected[mpsz_selected$DEPENDENCY %in% outlier_vals, ]
+
+tm_shape(mpsz_selected) +
+  tm_polygons(fill = "DEPENDENCY",
+          fill.scale = tm_scale_intervals(
+            style = "quantile", 
+            values = "brewer.blues"),
+          fill.legend = tm_legend(),
+          fill.chart = tm_chart_box()) +
+  tm_borders(fill_alpha = 0.5) +
+tm_shape(outlier_sf) +
+  tm_borders(col = "red", lwd = 2) +
+  tm_text("SUBZONE_N", col = "red", size = 0.7) +
+  tm_layout(asp = 0.8)
+```
+
+```{r}
+region_selected <- mpsz_pop2024 %>%
+  filter(REGION_N == "CENTRAL REGION")
+region_bbox <- st_bbox(region_selected)
+
+stats <- boxplot.stats(region_selected$DEPENDENCY)
+outlier_vals <- stats$out
+outlier_sf <- region_selected[region_selected$DEPENDENCY %in% outlier_vals, ]
+
+tmap_mode("view")
+tm_shape(region_selected, 
+         bbox = region_bbox) +
+  tm_fill("DEPENDENCY",
+          id = "SUBZONE_N",
+          popup.vars = c(
+            "Name" = "SUBZONE_N", 
+            "Dependency" = "DEPENDENCY")) +
+  tm_borders() +
+  tm_shape(outlier_sf) +
+  tm_borders(col = "red", lwd = 2)
+```
+
+```{r}
+tmap_mode("plot")
+```
+
+```{r}
+region_selected <- mpsz_pop2024 %>%
+  filter(REGION_N == "CENTRAL REGION")
+region_bbox <- st_bbox(region_selected)
+
+stats <- boxplot.stats(region_selected$DEPENDENCY)
+outlier_vals <- stats$out
+outlier_sf <- region_selected[region_selected$DEPENDENCY %in% outlier_vals, ]
+
+tmap_mode("view")
+
+tm_shape(region_selected, 
+         bbox = region_bbox) +
+  tm_fill("DEPENDENCY",
+          id = "SUBZONE_N",
+          popup.vars = c(
+            "Name" = "SUBZONE_N", 
+            "Dependency" = "DEPENDENCY")) +
+  tm_borders() +
+  tm_shape(outlier_sf) +
+  tm_borders(col = "red", lwd = 2) +
+  tm_view(set_zoom_limits = c(12,14))
+```
+
+```{r}
+tmap_mode("plot")
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
 ```
 
 ## \### Importing data
