@@ -16,7 +16,7 @@ execute:
 
 # 1.1 Overview
 
-This is hands-on Exercise 1.1
+This is hands-on Exercise 1, 1.1
 
 ## Getting started
 
@@ -228,7 +228,7 @@ ggplot(data=mpsz,
 
 # 2.1 Overview
 
-This is hands-on Exercise 2.1
+This is hands-on Exercise 1, 2.1
 
 ## Getting started
 
@@ -237,7 +237,7 @@ pacman::p_load(sf, tmap, tidyverse, rvest)
 ```
 
 ```{r}
-setwd("C:/Users/HT Chen/Desktop/ISSS626/ISSS626-wp/Hands-on_Ex/Hands-on_Ex02")
+setwd("C:/Users/HT Chen/Desktop/ISSS626/ISSS626-wp/Hands-on_Ex/Hands-on_Ex01.1")
 mpsz <- st_read("data2/geospatial/MasterPlan2019SubzoneBoundaryNoSeaKML.kml")
 ```
 
@@ -275,7 +275,7 @@ mpsz
 ```
 
 ```{r}
-setwd("C:/Users/HT Chen/Desktop/ISSS626/ISSS626-wp/Hands-on_Ex/Hands-on_Ex02")
+setwd("C:/Users/HT Chen/Desktop/ISSS626/ISSS626-wp/Hands-on_Ex/Hands-on_Ex01.1")
 popdata <- read_csv("data2/respopagesextod2024.csv")
 ```
 
@@ -318,7 +318,7 @@ mpsz_pop2024 <- left_join(mpsz, popdata2024,
 ```
 
 ```{r}
-setwd("C:/Users/HT Chen/Desktop/ISSS626/ISSS626-wp/Hands-on_Ex/Hands-on_Ex02")
+setwd("C:/Users/HT Chen/Desktop/ISSS626/ISSS626-wp/Hands-on_Ex/Hands-on_Ex01.1")
 write_rds(mpsz_pop2024, "data2/rds/mpsz_pop2024.rds")
 ```
 

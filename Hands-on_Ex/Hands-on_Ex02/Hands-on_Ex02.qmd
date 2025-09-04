@@ -1,0 +1,715 @@
+---
+title: "Hands-on Exercise 2"
+author: "HTC"
+date: "September 3, 2025"
+date-modified: "last-modified"
+format:
+  html:
+    toc-depth: 4
+    toc-expand: true
+execute: 
+  eval: true
+  echo: true
+  warning: false
+  freeze: true
+---
+
+# 4.1 Overview
+
+This is hands-on Exercise 2 , 4.1
+
+## Getting started
+
+```{r}
+pacman::p_load(sf, terra, spatstat, 
+               tmap, rvest, tidyverse)
+```
+
+```{r}
+setwd("C:/Users/HT Chen/Desktop/ISSS626/ISSS626-wp/Hands-on_Ex/Hands-on_Ex02")
+mpsz_sf <- st_read("data/geospatial/MasterPlan2019SubzoneBoundaryNoSeaKML (1).kml") %>% 
+  st_zm(drop = TRUE, what = "ZM") %>% st_transform(crs = 3414)
+```
+
+```{r}
+extract_kml_field <- function(html_text, field_name) {
+  if (is.na(html_text) || html_text == "") return(NA_character_)
+  
+  page <- read_html(html_text)
+  rows <- page %>% html_elements("tr")
+  
+  value <- rows %>%
+    keep(~ html_text2(html_element(.x, "th")) == field_name) %>%
+    html_element("td") %>%
+    html_text2()
+  
+  if (length(value) == 0) NA_character_ else value
+}
+```
+
+```{r}
+mpsz_sf <- mpsz_sf %>%
+  mutate(
+    REGION_N = map_chr(Description, extract_kml_field, "REGION_N"),
+    PLN_AREA_N = map_chr(Description, extract_kml_field, "PLN_AREA_N"),
+    SUBZONE_N = map_chr(Description, extract_kml_field, "SUBZONE_N"),
+    SUBZONE_C = map_chr(Description, extract_kml_field, "SUBZONE_C")
+  ) %>%
+  select(-Name, -Description) %>%
+  relocate(geometry, .after = last_col())
+```
+
+```{r}
+mpsz_cl <- mpsz_sf %>%
+  filter(SUBZONE_N != "SOUTHERN GROUP",
+         PLN_AREA_N != "WESTERN ISLANDS",
+         PLN_AREA_N != "NORTH-EASTERN ISLANDS")
+```
+
+```{r}
+setwd("C:/Users/HT Chen/Desktop/ISSS626/ISSS626-wp/Hands-on_Ex/Hands-on_Ex02")
+write_rds(mpsz_cl, "data/mpsz_cl.rds")
+```
+
+```{r}
+setwd("C:/Users/HT Chen/Desktop/ISSS626/ISSS626-wp/Hands-on_Ex/Hands-on_Ex02")
+childcare_sf <- st_read("data/geospatial/ChildCareServices.kml") %>% 
+  st_zm(drop = TRUE, what = "ZM") %>%
+  st_transform(crs = 3414)
+```
+
+```{r}
+plot(st_geometry(mpsz_cl))
+plot(st_geometry(childcare_sf), add = TRUE)
+```
+
+```{r}
+tmap_mode('view')
+tm_shape(childcare_sf)+
+  tm_dots()
+```
+
+```{r}
+tmap_mode('plot')
+```
+
+```{r}
+childcare_ppp <- as.ppp(childcare_sf)
+```
+
+```{r}
+class(childcare_ppp)
+```
+
+```{r}
+summary(childcare_ppp)
+```
+
+```{r}
+sg_owin <- as.owin(mpsz_cl)
+```
+
+```{r}
+class(sg_owin)
+```
+
+```{r}
+plot(sg_owin)
+```
+
+```{r}
+childcareSG_ppp = childcare_ppp[sg_owin]
+```
+
+```{r}
+childcareSG_ppp
+```
+
+```{r}
+#without csr
+clarkevans.test(childcareSG_ppp,
+                correction="none",
+                clipregion="sg_owin",
+                alternative=c("clustered"))
+```
+
+```{r}
+#with csr
+clarkevans.test(childcareSG_ppp,
+                correction="none",
+                clipregion="sg_owin",
+                alternative=c("clustered"),
+                method="MonteCarlo",
+                nsim=99)
+```
+
+-   **Without CSR:**
+
+-   **Test used:**
+
+    Clark–Evans nearest-neighbor test (no edge correction), alternative = “clustered”.
+
+    Result: R=0.5353, R = 0.5353 with p-value \< 2.2×10⁻¹⁶.
+
+    Interpretation: R\<1R\<1R\<1 and the p-value is far below 0.05 ⇒ reject H0H_0H0​ (Complete Spatial Randomness).\
+    The observed average nearest-neighbor distance is \~53.5% of what we’d expect under CSR, indicating strong, statistically significant clustering of childcare locations.
+
+-   **Business communication:**
+
+    Childcare centres are not randomly spread out; they cluster in a few hubs.
+
+    This implies over-concentration in certain neighbourhoods and potential service gaps elsewhere.
+
+    Actions:
+
+    -   Prioritise licensing/incentives for new centres in under-served subzones between/away from current clusters to improve equitable access.
+
+-   **With CSR(Monte Carlo)**
+
+-   **Test** **used:**
+
+    More realistic for irregular/finite windows; typically more conservative.
+
+    `Result: R = 0.535`, p = 0.01,
+
+    Decision: Reject H₀ at α = 0.05. Childcare locations are significantly clustered
+
+-   **Business communication:**
+
+    Childcare centres are concentrated in a few neighbourhoods rather than evenly spread.
+
+```{r}
+kde_SG_diggle <- density(
+  childcareSG_ppp,
+  sigma=bw.diggle,
+  edge=TRUE,
+  kernel="gaussian") 
+```
+
+```{r}
+plot(kde_SG_diggle)
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+summary(kde_SG_diggle)
+```
+
+```{r}
+bw <- bw.diggle(childcareSG_ppp)
+bw
+```
+
+```{r}
+childcareSG_ppp_km <- rescale.ppp(
+  childcareSG_ppp, 1000, "km")
+```
+
+```{r}
+kde_childcareSG_km <- density(childcareSG_ppp_km,
+                              sigma=bw.diggle,
+                              edge=TRUE,
+                              kernel="gaussian")
+```
+
+```{r}
+plot(kde_childcareSG_km)
+```
+
+```{r}
+bw.CvL(childcareSG_ppp_km)
+```
+
+```{r}
+bw.scott(childcareSG_ppp_km)
+```
+
+```{r}
+bw.ppl(childcareSG_ppp_km)
+```
+
+```{r}
+bw.diggle(childcareSG_ppp_km)
+```
+
+```{r}
+kde_childcareSG.ppl <- density(childcareSG_ppp_km, 
+                               sigma=bw.ppl, 
+                               edge=TRUE,
+                               kernel="gaussian")
+par(mfrow=c(1,2))
+plot(kde_childcareSG_km, main = "bw.diggle")
+plot(kde_childcareSG.ppl, main = "bw.ppl")
+```
+
+```{r}
+par(mfrow=c(2,2))
+plot(density(childcareSG_ppp_km, 
+             sigma=0.2959712, 
+             edge=TRUE, 
+             kernel="gaussian"), 
+     main="Gaussian")
+plot(density(childcareSG_ppp_km, 
+             sigma=0.2959712, 
+             edge=TRUE, 
+             kernel="epanechnikov"), 
+     main="Epanechnikov")
+plot(density(childcareSG_ppp_km, 
+             sigma=0.2959712, 
+             edge=TRUE, 
+             kernel="quartic"), 
+     main="Quartic")
+plot(density(childcareSG_ppp_km, 
+             sigma=0.2959712, 
+             edge=TRUE, 
+             kernel="disc"), 
+     main="Disc")
+```
+
+```{r}
+kde_childcareSG_fb <- density(childcareSG_ppp_km,
+                              sigma=0.6, 
+                              edge=TRUE,
+                              kernel="gaussian")
+plot(kde_childcareSG_fb)
+```
+
+```{r}
+kde_childcareSG_ab <- adaptive.density(
+  childcareSG_ppp_km, 
+  method="kernel")
+plot(kde_childcareSG_ab)
+```
+
+```{r}
+par(mfrow=c(1,2))
+plot(kde_childcareSG_fb, main = "Fixed bandwidth")
+plot(kde_childcareSG_ab, main = "Adaptive bandwidth")
+```
+
+```{r}
+kde_childcareSG_bw_terra <- rast(kde_childcareSG_km)
+```
+
+```{r}
+class(kde_childcareSG_bw_terra)
+```
+
+```{r}
+kde_childcareSG_bw_terra
+```
+
+```{r}
+crs(kde_childcareSG_bw_terra) <- "EPSG:3414"
+```
+
+```{r}
+kde_childcareSG_bw_terra
+```
+
+```{r}
+tm_shape(kde_childcareSG_bw_terra) + 
+  tm_raster(col.scale = 
+              tm_scale_continuous(
+                values = "viridis"),
+            col.legend = tm_legend(
+            title = "Density values",
+            title.size = 0.7,
+            text.size = 0.7,
+            bg.color = "white",
+            bg.alpha = 0.7,
+            position = tm_pos_in(
+              "right", "bottom"),
+            frame = TRUE)) +
+  tm_graticules(labels.size = 0.7) +
+  tm_compass() +
+  tm_layout(scale = 1.0)
+```
+
+```{r}
+#Geospatial Data wrangling
+```
+
+```{r}
+pg <- mpsz_cl %>%
+  filter(PLN_AREA_N == "PUNGGOL")
+tm <- mpsz_cl %>%
+  filter(PLN_AREA_N == "TAMPINES")
+ck <- mpsz_cl %>%
+  filter(PLN_AREA_N == "CHOA CHU KANG")
+jw <- mpsz_cl %>%
+  filter(PLN_AREA_N == "JURONG WEST")
+
+```
+
+```{r}
+par(mfrow=c(2,2))
+plot(st_geometry(pg), main = "Ponggol")
+plot(st_geometry(tm), main = "Tampines")
+plot(st_geometry(ck), main = "Choa Chu Kang")
+plot(st_geometry(jw), main = "Jurong West")
+```
+
+```{r}
+pg_owin = as.owin(pg)
+tm_owin = as.owin(tm)
+ck_owin = as.owin(ck)
+jw_owin = as.owin(jw)
+```
+
+```{r}
+childcare_pg_ppp = childcare_ppp[pg_owin]
+childcare_tm_ppp = childcare_ppp[tm_owin]
+childcare_ck_ppp = childcare_ppp[ck_owin]
+childcare_jw_ppp = childcare_ppp[jw_owin]
+```
+
+```{r}
+childcare_pg_ppp.km = rescale.ppp(childcare_pg_ppp, 1000, "km")
+childcare_tm_ppp.km = rescale.ppp(childcare_tm_ppp, 1000, "km")
+childcare_ck_ppp.km = rescale.ppp(childcare_ck_ppp, 1000, "km")
+childcare_jw_ppp.km = rescale.ppp(childcare_jw_ppp, 1000, "km")
+```
+
+```{r}
+par(mfrow=c(2,2))
+plot(unmark(childcare_pg_ppp.km), 
+  main="Punggol")
+plot(unmark(childcare_tm_ppp.km), 
+  main="Tampines")
+plot(unmark(childcare_ck_ppp.km), 
+  main="Choa Chu Kang")
+plot(unmark(childcare_jw_ppp.km), 
+  main="Jurong West")
+```
+
+```{r}
+clarkevans.test(childcare_ck_ppp,
+                correction="none",
+                clipregion=NULL,
+                alternative=c("two.sided"),
+                nsim=999)
+```
+
+```{r}
+clarkevans.test(childcare_tm_ppp,
+                correction="none",
+                clipregion=NULL,
+                alternative=c("two.sided"),
+                nsim=999)
+```
+
+```{r}
+par(mfrow=c(2,2))
+plot(density(childcare_pg_ppp.km, 
+             sigma=bw.diggle, 
+             edge=TRUE, 
+             kernel="gaussian"),
+     main="Punggol")
+plot(density(childcare_tm_ppp.km, 
+             sigma=bw.diggle, 
+             edge=TRUE, 
+             kernel="gaussian"),
+     main="Tempines")
+plot(density(childcare_ck_ppp.km, 
+             sigma=bw.diggle, 
+             edge=TRUE, 
+             kernel="gaussian"),
+     main="Choa Chu Kang")
+plot(density(childcare_jw_ppp.km, 
+             sigma=bw.diggle, 
+             edge=TRUE, 
+             kernel="gaussian"),
+     main="Jurong West")
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+# 5.1 Overview
+
+This is hands-on Exercise 2 , 5.1
+
+## Getting started
+
+```{r}
+pacman::p_load(sf, spatstat, tmap, tidyverse, rvest, purrr)
+
+```
+
+```{r}
+setwd("C:/Users/HT Chen/Desktop/ISSS626/ISSS626-wp/Hands-on_Ex/Hands-on_Ex02")
+mpsz_sf <- st_read("data/geospatial/MasterPlan2019SubzoneBoundaryNoSeaKML (1).kml") %>% 
+  st_zm(drop = TRUE, what = "ZM") %>% st_transform(crs = 3414)
+```
+
+```{r}
+extract_kml_field <- function(html_text, field_name) {
+  if (is.na(html_text) || html_text == "") return(NA_character_)
+  
+  page <- read_html(html_text)
+  rows <- page %>% html_elements("tr")
+  
+  value <- rows %>%
+    keep(~ html_text2(html_element(.x, "th")) == field_name) %>%
+    html_element("td") %>%
+    html_text2()
+  
+  if (length(value) == 0) NA_character_ else value
+}
+```
+
+```{r}
+mpsz_sf <- mpsz_sf %>%
+  mutate(
+    REGION_N = map_chr(Description, extract_kml_field, "REGION_N"),
+    PLN_AREA_N = map_chr(Description, extract_kml_field, "PLN_AREA_N"),
+    SUBZONE_N = map_chr(Description, extract_kml_field, "SUBZONE_N"),
+    SUBZONE_C = map_chr(Description, extract_kml_field, "SUBZONE_C")
+  ) %>%
+  select(-Name, -Description) %>%
+  relocate(geometry, .after = last_col())
+```
+
+```{r}
+mpsz_cl <- mpsz_sf %>%
+  filter(SUBZONE_N != "SOUTHERN GROUP",
+         PLN_AREA_N != "WESTERN ISLANDS",
+         PLN_AREA_N != "NORTH-EASTERN ISLANDS")
+```
+
+```{r}
+setwd("C:/Users/HT Chen/Desktop/ISSS626/ISSS626-wp/Hands-on_Ex/Hands-on_Ex02")
+write_rds(mpsz_cl, "data/mpsz_cl_01.rds")
+```
+
+```{r}
+sg_owin <- as.owin(mpsz_cl)
+```
+
+```{r}
+class(sg_owin)
+```
+
+```{r}
+plot(sg_owin)
+```
+
+```{r}
+childcareSG_ppp = childcare_ppp[sg_owin]
+```
+
+```{r}
+childcareSG_ppp
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+pg <- mpsz_cl %>%
+  filter(PLN_AREA_N == "PUNGGOL")
+tm <- mpsz_cl %>%
+  filter(PLN_AREA_N == "TAMPINES")
+ck <- mpsz_cl %>%
+  filter(PLN_AREA_N == "CHOA CHU KANG")
+jw <- mpsz_cl %>%
+  filter(PLN_AREA_N == "JURONG WEST")
+```
+
+```{r}
+par(mfrow=c(2,2))
+plot(st_geometry(pg), main = "Ponggol")
+plot(st_geometry(tm), main = "Tampines")
+plot(st_geometry(ck), main = "Choa Chu Kang")
+plot(st_geometry(jw), main = "Jurong West")
+```
+
+```{r}
+pg_owin = as.owin(pg)
+tm_owin = as.owin(tm)
+ck_owin = as.owin(ck)
+jw_owin = as.owin(jw)
+```
+
+```{r}
+childcare_pg_ppp = childcare_ppp[pg_owin]
+childcare_tm_ppp = childcare_ppp[tm_owin]
+childcare_ck_ppp = childcare_ppp[ck_owin]
+childcare_jw_ppp = childcare_ppp[jw_owin]
+```
+
+```{r}
+childcare_pg_ppp.km = rescale.ppp(childcare_pg_ppp, 1000, "km")
+childcare_tm_ppp.km = rescale.ppp(childcare_tm_ppp, 1000, "km")
+childcare_ck_ppp.km = rescale.ppp(childcare_ck_ppp, 1000, "km")
+childcare_jw_ppp.km = rescale.ppp(childcare_jw_ppp, 1000, "km")
+```
+
+```{r}
+par(mfrow=c(2,2))
+plot(unmark(childcare_pg_ppp.km), 
+  main="Punggol")
+plot(unmark(childcare_tm_ppp.km), 
+  main="Tampines")
+plot(unmark(childcare_ck_ppp.km), 
+  main="Choa Chu Kang")
+plot(unmark(childcare_jw_ppp.km), 
+  main="Jurong West")
+```
+
+```{r}
+set.seed(1234)
+```
+
+```{r}
+G_CK = Gest(childcare_ck_ppp, correction = "border")
+plot(G_CK, xlim=c(0,500))
+```
+
+```{r}
+G_CK.csr <- envelope(childcare_ck_ppp, Gest, nsim = 999)
+```
+
+```{r}
+plot(G_CK.csr)
+```
+
+```{r}
+G_tm = Gest(childcare_tm_ppp, correction = "best")
+plot(G_tm)
+```
+
+```{r}
+G_tm.csr <- envelope(childcare_tm_ppp, Gest, correction = "all", nsim = 999)
+```
+
+```{r}
+plot(G_tm.csr)
+```
+
+```{r}
+F_CK = Fest(childcare_ck_ppp)
+plot(F_CK)
+```
+
+```{r}
+F_CK.csr <- envelope(childcare_ck_ppp, Fest, nsim = 999)
+```
+
+```{r}
+plot(F_CK.csr)
+```
+
+```{r}
+F_tm = Fest(childcare_tm_ppp, correction = "best")
+plot(F_tm)
+```
+
+```{r}
+F_tm.csr <- envelope(childcare_tm_ppp, Fest, correction = "all", nsim = 999)
+```
+
+```{r}
+plot(F_tm.csr)
+```
+
+```{r}
+K_ck = Kest(childcare_ck_ppp, correction = "Ripley")
+plot(K_ck, . -r ~ r, ylab= "K(d)-r", xlab = "d(m)")
+```
+
+```{r}
+K_ck.csr <- envelope(childcare_tm_ppp, Fest, correction = "all", nsim = 999)
+```
+
+```{r}
+plot(K_ck.csr, . - r ~ r, xlab="d", ylab="K(d)-r")
+```
+
+```{r}
+K_tm = Kest(childcare_tm_ppp, correction = "Ripley")
+plot(K_tm, . -r ~ r, 
+     ylab= "K(d)-r", xlab = "d(m)", 
+     xlim=c(0,1000))
+```
+
+```{r}
+K_tm.csr <- envelope(childcare_tm_ppp, Kest, nsim = 99, rank = 1, glocal=TRUE)
+```
+
+```{r}
+plot(K_tm.csr, . - r ~ r, 
+     xlab="d", ylab="K(d)-r", xlim=c(0,500))
+```
+
+```{r}
+L_ck = Lest(childcare_ck_ppp, correction = "Ripley")
+plot(L_ck, . -r ~ r, 
+     ylab= "L(d)-r", xlab = "d(m)")
+```
+
+```{r}
+L_ck.csr <- envelope(childcare_ck_ppp, Lest, nsim = 99, rank = 1, glocal=TRUE)
+```
+
+```{r}
+plot(L_ck.csr, . - r ~ r, xlab="d", ylab="L(d)-r")
+```
+
+```{r}
+L_tm = Lest(childcare_tm_ppp, correction = "Ripley")
+plot(L_tm, . -r ~ r, 
+     ylab= "L(d)-r", xlab = "d(m)", 
+     xlim=c(0,1000))
+```
+
+```{r}
+L_tm.csr <- envelope(childcare_tm_ppp, Lest, nsim = 99, rank = 1, glocal=TRUE)
+```
+
+```{r}
+plot(L_tm.csr, . - r ~ r, 
+     xlab="d", ylab="L(d)-r", xlim=c(0,500))
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
