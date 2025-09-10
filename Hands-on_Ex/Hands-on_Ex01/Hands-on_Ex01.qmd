@@ -38,7 +38,7 @@ cyclingpath = st_read(dsn = "data/geospatial/CyclingPath_Apr2025",
 ```
 
 ```{r}
-preschool = st_read("data/geospatial/PreSchoolsLocation.kml")
+preschool = st_read("data/geospatial/PreSchoolsLocation.kml") #%>%st_transform(crs = 3414)
 
 ```
 
@@ -144,6 +144,10 @@ buffer_cycling$AREA <- st_area(buffer_cycling)
 buffer_cycling <- buffer_cycling %>%
   mutate(AREA = st_area(geometry))
 ```
+
+buffer_cycling \<- buffer_cycling %\>%
+
+mutate(AREA = st_area(geometry))
 
 ```{r}
 sum(buffer_cycling$AREA)
@@ -473,6 +477,7 @@ tmap_style("white")
 ```
 
 ```{r}
+#| fig-width: 8
 tm_shape(mpsz_pop2024) + 
   tm_polygons(
     fill = c("YOUNG", "AGED"),
@@ -488,6 +493,7 @@ tm_shape(mpsz_pop2024) +
 ```
 
 ```{r}
+
 youngmap <- tm_shape(mpsz_pop2024)+ 
   tm_polygons(fill = "YOUNG",
               fill.legend = tm_legend(

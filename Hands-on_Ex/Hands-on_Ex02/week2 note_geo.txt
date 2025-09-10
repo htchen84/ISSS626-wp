@@ -1,0 +1,59 @@
+sha coordinate
+svn boundary
+combine to give sf dataframe
+
+
+engine name
+sf epsg compatibility
+
+9001 and 3414 code name without changing coordinate
+
+st_transform change unit
+
+decimal to mete
+
+%>% save the result of first equation and proceed to next
+
+use gis handy tools to do analysis drag and drop
+run code instead
+
+dengue case dataset how to produce
+
+Vietnam, SG
+
+250m
+every 5 they can generate report how
+
+fog area/ 
+
+muta is the function port over instead of creation
+
+tmap thematic map in R
+
+fig-width: 8
+#| eco: false hide the code
+#| eval: false
+
+zoom in and out
+
+ev charging station and petrol stations intensity
+geo coding - 6 digit code
+
+geo coding issue - where the location is anyone visit it.
+planning administration boundary
+
+noise issue in plane landings
+road segment have the higher incident eg. careless at any place, specific cause
+lack of traffic light, blind spot, lamp post no light
+ reject hypothesis, more cluster
+
+first order: go verify two measure: kde (exploratory), quadrat analysis(g)
+second order: 25m apart convinence store, form a traffic
+kde: distance and show how significant
+
+fix distance, apply throughout (point spread evenly)
+adaptive : adaptive kde specific no. of point and define the k search 5 neighbors each round will find the closes point near the neighbors
+central area is cluttered and slowly spread out adaptive(observe)
+
+monte carlo : one round of data, simulation to , stablise the results
+
