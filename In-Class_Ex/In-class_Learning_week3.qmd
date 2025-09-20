@@ -32,7 +32,7 @@ pacman::p_load(sf, tidyverse,httr,tmap)
 
 ```{r}
 setwd("C:/Users/HT Chen/Desktop/ISSS626/ISSS626-wp/Assignment1")
-folder_path <- "ACRAInformationonCorporateEntities"
+folder_path <- "data/ACRAInformationonCorporateEntities"
 file_list <- list.files(path = folder_path,
                         pattern = "^ACRA*.*\\.csv$",
                         full.names =TRUE)
@@ -49,7 +49,7 @@ write_rds(acra_data,
 
 ```{r}
 biz_56111 <- acra_data %>%
-  select(1:24) %>%
+  dplyr::select(1:24) %>%
   filter(primary_ssic_code ==56111) %>%
   rename(date = registration_incorporation_date) %>%
   mutate(date = as.Date(date),
