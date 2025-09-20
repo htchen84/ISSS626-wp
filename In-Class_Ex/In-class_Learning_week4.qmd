@@ -1,7 +1,17 @@
 ---
-title: "In_class_ex02"
+title: "In-class_Learning_02"
 author: "HTC"
----::
+date: "September 8, 2025"
+date-modified: "last-modified"
+format:
+  html:
+    toc-depth: 4
+    toc-expand: true
+execute: 
+  eval: true
+  echo: true
+  warning: false
+  freeze: true
 ---
 
 ```{r}
