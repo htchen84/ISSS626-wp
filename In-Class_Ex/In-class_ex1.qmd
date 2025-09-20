@@ -1,0 +1,60 @@
+---
+title: "In_class_ex02"
+author: "HTC"
+---::
+---
+
+```{r}
+pacman::p_load(sf, spdep, tmap, tidyverse, knitr,gwmodel)
+```
+
+```{r}
+setwd("C:/Users/HT Chen/Desktop/ISSS626/ISSS626-wp/Hands-on_Ex/Hands-on_Ex04")
+hunan <- st_read(dsn = "data/geospatial", 
+                 layer = "Hunan")
+```
+
+```{r}
+setwd("C:/Users/HT Chen/Desktop/ISSS626/ISSS626-wp/Hands-on_Ex/Hands-on_Ex04")
+hunan2012 <- read_csv("data/aspatial/Hunan_2012.csv")
+```
+
+```{r}
+hunan_sf <- left_join(hunan,hunan2012) %>%
+  select(1:3, 7, 15,16,31,32)
+```
+
+```{r}
+hunan_sp <- hunan_sf %>%
+  as_Spatial()
+```
+
+```{r}
+bw_cv <- bw.gwr(GPEC = 1,
+                data = hunan_sp,
+                approach = "CV",
+                adaptive = False,
+                kernel = "bisquare",
+                longlat = T)
+```
+
+```{r}
+bw_AIC <- bw.gwr(GPEC = 1,
+                data = hunan_sp,
+                approach = "AIC",
+                adaptive = FALSE,
+                kernel = "bisquare",
+                longlat = T)
+```
+
+```{r}
+gwstat <- gwss(data = hunan_sp,
+                approach = "GDPPC",
+                adaptive = FALSE,
+                kernel = "bisquare",
+                longlat = T)
+```
+
+```{r}
+
+```

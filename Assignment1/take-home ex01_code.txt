@@ -1,0 +1,41 @@
+# 1. Join biz_56111 with OneMap results
+# Make sure both postal_code and POSTAL are 6-digit characters
+biz_geo <- biz_56111 %>%
+  mutate(postal_code = str_pad(as.character(postal_code), 6, pad = "0")) %>%
+  left_join(found %>%
+              mutate(POSTAL = str_pad(as.character(POSTAL), 6, pad = "0")),
+            by = c("postal_code" = "POSTAL"))
+
+# 2. Keep only rows with valid coordinates
+biz_geo <- biz_geo %>%
+  filter(!is.na(LONGITUDE), !is.na(LATITUDE))
+
+# 3. Convert to sf object (WGS84)
+biz_sf_wgs <- st_as_sf(biz_geo,
+                       coords = c("LONGITUDE", "LATITUDE"),
+                       crs = 4326,
+                       remove = FALSE)
+
+# 4. Project to Singapore SVY21 (EPSG:3414, units in meters)
+biz_sf <- st_transform(biz_sf_wgs, 3414)
+
+# 5. Create a study window (owin)
+# Option A: Convex hull + buffer
+win <- biz_sf %>%
+  st_union() %>%
+  st_convex_hull() %>%
+  st_buffer(200) %>%
+  as.owin()
+
+# Option B: Simple bounding box
+# bb  <- st_bbox(biz_sf)
+# pad <- 200
+# win <- owin(xrange = c(bb$xmin - pad, bb$xmax + pad),
+#             yrange = c(bb$ymin - pad, bb$ymax + pad))
+
+# 6. Convert points to spatstat ppp object
+biz_ppp <- as.ppp(biz_sf, W = win)
+
+# 7. Plot
+plot(win, main = "SSIC 56111 businesses (ppp in owin)")
+plot(biz_ppp, add = TRUE, pch = 16, cex = 0.4)

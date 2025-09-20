@@ -1,0 +1,299 @@
+---
+title: "Take-Home Exercise 1"
+author: "HTC"
+date: "September 8, 2025"
+date-modified: "last-modified"
+format:
+  html:
+    toc-depth: 4
+    toc-expand: true
+execute: 
+  eval: true
+  echo: true
+  warning: false
+  freeze: true
+---
+
+1.1 Overview
+
+This is Take-Home Exercise 1 , 1.1
+
+```{r}
+pacman::p_load(sf, tidyverse, dplyr, lubridate, httr, tmap,purrr,raster, sparr)
+```
+
+```{r}
+setwd("C:/Users/HT Chen/Desktop/ISSS626/ISSS626-wp/Assignment1")
+folder_path <- "ACRAInformationonCorporateEntities"
+file_list <- list.files(path = folder_path,
+                        pattern = "^ACRA*.*\\.csv$",
+                        full.names =TRUE)
+acra_data <- file_list %>%
+  map_dfr(read_csv)
+
+```
+
+```{r}
+setwd("C:/Users/HT Chen/Desktop/ISSS626/ISSS626-wp/Assignment1")
+write_rds(acra_data,
+          "data/acra_data.rds")
+```
+
+```{r}
+biz_56111 <- acra_data %>%
+  dplyr::select(1:24) %>%
+  filter(primary_ssic_code ==56111) %>%
+  rename(date = registration_incorporation_date) %>%
+  mutate(date = as.Date(date),
+         YEAR = year(date),
+         MONTH_NUM = month(date),
+         MONTH_ABBR = month(date,label = TRUE, abbr = TRUE)) %>%
+  mutate(
+    postal_code = str_pad(postal_code,
+    width = 6, side = "left", pad = "0")) %>% 
+          filter((YEAR == 2024 & MONTH_NUM >= 1) |
+         (YEAR == 2025 & MONTH_NUM <= 6))
+```
+
+```{r}
+
+```
+
+```{r}
+postcodes <- unique(biz_56111$postal_code)
+
+url <- "https://onemap.gov.sg/api/common/elastic/search"
+
+found <- data.frame()
+not_found <- data.frame(postcode = character())
+
+for (pc in postcodes) {
+  query <- list(
+    searchVal = pc,
+    returnGeom = "Y",
+    getAddrDetails = "y",
+    pageNum = "1")
+  res <- GET (url, query = query) 
+  json <- content(res)
+  if (json$found != 0) {
+    df <- as.data.frame(json$results, stringsAsFactors = FALSE) 
+    df$input_postcode <- pc 
+    found <- bind_rows (found, df)
+} else {
+not_found <- bind_rows (not_found, data.frame(postcode = pc))
+}}
+```
+
+```{r}
+biz_S6111 = biz_56111 %>% 
+  left_join(found,
+            by = c('postal_code' = 'POSTAL'))
+```
+
+```{r}
+biz_geo <- biz_56111 %>%
+  mutate(postal_code = str_pad(as.character(postal_code), 6, pad = "0")) %>%
+  left_join(found %>%
+              mutate(POSTAL = str_pad(as.character(POSTAL), 6, pad = "0")),
+            by = c("postal_code" = "POSTAL"))
+
+
+```
+
+```{r}
+
+biz_geo <- biz_geo %>%
+  filter(!is.na(LONGITUDE), !is.na(LATITUDE))
+
+
+
+```
+
+```{r}
+
+biz_sf_wgs <- st_as_sf(biz_geo,
+                       coords = c("LONGITUDE", "LATITUDE"),
+                       crs = 4326,
+                       remove = FALSE)
+
+
+```
+
+```{r}
+
+biz_sf <- st_transform(biz_sf_wgs, 3414)
+
+```
+
+```{r}
+
+win <- biz_sf %>%
+  st_union() %>%
+  st_convex_hull() %>%
+  st_buffer(200) %>%
+  as.owin()
+
+
+
+```
+
+```{r}
+biz_ppp <- as.ppp(biz_sf, W = win)
+```
+
+```{r}
+plot(win, main = "SSIC 56111 businesses (ppp in owin)")
+plot(biz_ppp, add = TRUE, pch = 16, cex = 0.4)
+```
+
+```{r}
+n_pts   <- biz_ppp$n
+win_area<- spatstat.geom::area.owin(win)
+lambda  <- n_pts / win_area
+cat("Points:", n_pts, " | Window area (m^2):", round(win_area,0),
+    " | Intensity (points/m^2):", signif(lambda, 4), "\n")
+
+## 8.2 Quadrat counts + chi-square test (simple CSR check)
+set.seed(123)
+Q       <- spatstat.geom::quadratcount(biz_ppp, nx = 4, ny = 4)
+plot(biz_ppp, pch = 16, cex = 0.4, main = "Quadrat counts (4x4)")
+plot(Q, add = TRUE, cex = 0.9)
+qt_res  <- spatstat::quadrat.test(biz_ppp, nx = 4, ny = 4)   # chi-square
+print(qt_res)
+
+## 8.3 Kernel Density Estimation (spatial)
+# Try data-driven bandwidth; fall back to a fixed one if unavailable
+bw_try <- try(spatstat.geom::bw.diggle(biz_ppp), silent = TRUE)
+sigma  <- if (inherits(bw_try, "try-error") || is.na(bw_try)) 300 else bw_try
+cat("KDE bandwidth (sigma, m):", round(sigma,1), "\n")
+
+kde_im <- spatstat::density.ppp(biz_ppp, sigma = sigma, edge = TRUE)  # im object
+plot(kde_im, main = "Spatial KDE (density.ppp)"); plot(biz_ppp, add = TRUE, pch = 16, cex = 0.3)
+
+
+```
+
+```{r}
+pacman::p_load(spatstat.geom, spatstat.explore, spatstat.core)
+
+## First-order: intensity
+n_pts    <- biz_ppp$n
+win_area <- spatstat.geom::area.owin(win)
+lambda   <- n_pts / win_area
+cat("Points:", n_pts, "| Window area (m^2):", round(win_area,0),
+    "| Intensity (points/m^2):", signif(lambda,4), "\n")
+
+## Quadrat counts + chi-square (CSR)
+set.seed(123)
+Q <- spatstat.geom::quadratcount(biz_ppp, nx = 4, ny = 4)
+plot(biz_ppp, pch = 16, cex = 0.4, main = "Quadrat counts (4x4)")
+plot(Q, add = TRUE, cex = 0.9)
+
+qt_res <- spatstat.explore::quadrat.test(biz_ppp, nx = 4, ny = 4)
+print(qt_res)
+
+## KDE (first-order)
+bw_try <- try(spatstat.explore::bw.diggle(biz_ppp), silent = TRUE)
+sigma  <- if (inherits(bw_try, "try-error") || is.na(bw_try)) 300 else bw_try
+cat("KDE bandwidth (sigma, m):", round(sigma,1), "\n")
+
+kde_im <- spatstat.explore::density.ppp(biz_ppp, sigma = sigma, edge = TRUE)
+plot(kde_im, main = "Spatial KDE (density.ppp)")
+plot(biz_ppp, add = TRUE, pch = 16, cex = 0.3)
+
+## Second-order
+Khat <- spatstat.explore::Kest(biz_ppp, correction = "Ripley")
+plot(Khat, main = "Ripley’s K")
+
+Lhat <- spatstat.explore::Lest(biz_ppp, correction = "Ripley")
+plot(Lhat, main = "L-function")
+
+pcfhat <- spatstat.explore::pcf(biz_ppp)
+plot(pcfhat, main = "Pair Correlation Function")
+
+```
+
+```{r}
+
+```
+
+```{r}
+# libs you’re already using + spatstat split packages
+pacman::p_load(spatstat.geom, spatstat.explore, spatstat.core)
+
+# use unmarked points for plotting to avoid "marks are NA" warnings
+pp_plot <- spatstat.geom::unmark(biz_ppp)
+
+# ---------- 1) Nearest Neighbour Index (NNI) ----------
+lambda   <- biz_ppp$n / spatstat.geom::area.owin(win)          # intensity
+r_obs    <- mean(spatstat.geom::nndist(biz_ppp))               # mean NN distance
+r_csr    <- 1/(2*sqrt(lambda))                                 # CSR expectation in 2D
+NNI      <- r_obs / r_csr
+cat(sprintf("NNI = %.3f  (mean NN obs = %.2f m; CSR expected = %.2f m)\n",
+            NNI, r_obs, r_csr))
+
+# ---------- 2) G-function (nearest-neighbour CDF) ----------
+Ghat   <- spatstat.explore::Gest(biz_ppp, correction = "rs")   # “rs” robust
+envG   <- spatstat.explore::envelope(biz_ppp, spatstat.explore::Gest,
+                                     nsim = 39, global = FALSE,
+                                     correction = "rs", savefuns = TRUE, verbose = FALSE)
+
+# ---------- 3) F-function (empty-space CDF) ----------
+Fhat   <- spatstat.explore::Fest(biz_ppp, correction = "rs")
+envF   <- spatstat.explore::envelope(biz_ppp, spatstat.explore::Fest,
+                                     nsim = 39, global = FALSE,
+                                     correction = "rs", savefuns = TRUE, verbose = FALSE)
+
+# ---------- 4) K-function (Ripley’s K) ----------
+Khat   <- spatstat.explore::Kest(biz_ppp, correction = "Ripley")
+envK   <- spatstat.explore::envelope(biz_ppp, spatstat.explore::Kest,
+                                     nsim = 39, global = FALSE,
+                                     correction = "Ripley", savefuns = TRUE, verbose = FALSE)
+
+# ---------- 5) L-function (variance-stabilized) ----------
+Lhat   <- spatstat.explore::Lest(biz_ppp, correction = "Ripley")
+
+# ---------- Plot all on a single page ----------
+op <- par(mfrow = c(2,3), mar = c(4,4,2,1))
+
+# (A) Map with points
+plot(win, main = "Points in window"); plot(pp_plot, add = TRUE, pch = 16, cex = 0.35)
+
+# (B) G with CSR envelope
+plot(envG, main = "G-function (with CSR envelope)"); grid()
+
+# (C) F with CSR envelope
+plot(envF, main = "F-function (with CSR envelope)"); grid()
+
+# (D) K with CSR envelope
+plot(envK, main = "Ripley’s K (with CSR envelope)"); grid()
+
+# (E) L-function
+plot(Lhat, main = "L-function"); abline(h = 0, lty = 2); grid()
+
+# (F) NNI text panel
+plot.new(); text(0.05, 0.8, sprintf("NNI = %.3f", NNI), adj = 0, cex = 1.3)
+text(0.05, 0.6, sprintf("Mean NN (obs): %.2f m", r_obs), adj = 0)
+text(0.05, 0.45, sprintf("Mean NN (CSR): %.2f m", r_csr), adj = 0)
+text(0.05, 0.25, ifelse(NNI < 1, "→ Clustering (NNI < 1)",
+                        ifelse(NNI > 1, "→ Regularity (NNI > 1)", "→ CSR (≈ 1)")), adj = 0)
+
+par(op)
+
+```
+
+```{r}
+
+```
+
+```{r}
+biz_S6111
+```
+
+```{r}
+
+```
+
+```{r}
+
+```

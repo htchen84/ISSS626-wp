@@ -1,0 +1,13 @@
+---
+title: "ISSS626-wp"
+---
+
+```{r}
+
+```
+
+Welcome to ISSS626 Geospatial Analytics and Application
+
+Coursework website
+
+![](images/image_ex1.webp){width="566"}
