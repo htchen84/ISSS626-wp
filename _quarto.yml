@@ -25,7 +25,11 @@ website:
         href: "In-Class_Ex/In-class_Ex03a.html"
     - text: "Take-home exercise"
       menu:
-      - text: "Take-Home Exercise1"
+      - text: "Take-Home Exercise1a_Restaurant"
+        href: "Assignment1/Take-Home_Exercise_1.html"
+      - text: "Take-Home Exercise1b_Publishing_of_Games"
+        href: "Assignment1/Take-Home_Exercise_1.html"
+      - text: "Take-Home Exercise1c_Short_Term_Accommodation_Activities"
         href: "Assignment1/Take-Home_Exercise_1.html"
 
     right:

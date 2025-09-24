@@ -1,0 +1,464 @@
+---
+title: "Take-Home Exercise 1a"
+author: "HTC"
+date: "September 15, 2025"
+date-modified: "last-modified"
+format:
+  html:
+    toc-depth: 4
+    toc-expand: true
+execute: 
+  eval: true
+  echo: true
+  warning: false
+  freeze: true
+---
+
+# Overview
+
+### This is Take-Home Exercise 1, 1.1
+
+# Importing Packages
+
+```{r}
+pacman::p_load(sf, tidyverse, dplyr, lubridate, httr, tmap,purrr,raster, sparr,rvest,spatstat.geom, spatstat.core)
+```
+
+# Data Wrangling
+
+```{r}
+setwd("C:/Users/HT Chen/Desktop/ISSS626/ISSS626-wp/Assignment1")
+folder_path <- "data/ACRAInformationonCorporateEntities"
+file_list <- list.files(path = folder_path,
+                        pattern = "^ACRA*.*\\.csv$",
+                        full.names =TRUE)
+acra_data <- file_list %>%
+  map_dfr(read_csv)
+
+```
+
+```{r}
+setwd("C:/Users/HT Chen/Desktop/ISSS626/ISSS626-wp/Assignment1")
+write_rds(acra_data,
+          "data/acra_data.rds")
+```
+
+### SSIC Code(Restaurant) within Specific Timeframe
+
+```{r}
+biz_56111 <- acra_data %>%
+  dplyr::select(1:24) %>%
+  filter(primary_ssic_code ==56111) %>%
+  rename(date = registration_incorporation_date) %>%
+  mutate(date = as.Date(date),
+         YEAR = year(date),
+         MONTH_NUM = month(date),
+         MONTH_ABBR = month(date,label = TRUE, abbr = TRUE)) %>%
+  mutate(
+    postal_code = str_pad(postal_code,
+    width = 6, side = "left", pad = "0")) %>% 
+          filter((YEAR == 2024 & MONTH_NUM >= 1) |
+         (YEAR == 2025 & MONTH_NUM <= 6))
+```
+
+```{r}
+
+```
+
+```{r}
+postcodes <- unique(biz_56111$postal_code)
+
+url <- "https://onemap.gov.sg/api/common/elastic/search"
+
+found <- data.frame()
+not_found <- data.frame(postcode = character())
+
+for (pc in postcodes) {
+  query <- list(
+    searchVal = pc,
+    returnGeom = "Y",
+    getAddrDetails = "y",
+    pageNum = "1")
+  res <- GET (url, query = query) 
+  json <- content(res)
+  if (json$found != 0) {
+    df <- as.data.frame(json$results, stringsAsFactors = FALSE) 
+    df$input_postcode <- pc 
+    found <- bind_rows (found, df)
+} else {
+not_found <- bind_rows (not_found, data.frame(postcode = pc))
+}}
+```
+
+```{r}
+biz_S6111 = biz_56111 %>% 
+  left_join(found,
+            by = c('postal_code' = 'POSTAL'))
+```
+
+### Geocode and Simple Point Features Conversion
+
+```{r}
+biz_geo <- biz_56111 %>%
+  mutate(postal_code = str_pad(as.character(postal_code), 6, pad = "0")) %>%
+  left_join(found %>%
+              mutate(POSTAL = str_pad(as.character(POSTAL), 6, pad = "0")),
+            by = c("postal_code" = "POSTAL"))
+  
+
+
+```
+
+```{r}
+
+biz_geo <- biz_geo %>%
+  filter(!is.na(LONGITUDE), !is.na(LATITUDE))
+
+
+
+```
+
+```{r}
+
+biz_sf_wgs <- st_as_sf(biz_geo,
+                       coords = c("LONGITUDE", "LATITUDE"),
+                       crs = 4326) %>%
+  st_transform(crs = 3414) %>%
+  st_geometry(biz_geo)
+
+```
+
+```{r}
+
+
+```
+
+```{r}
+
+```
+
+```{r}
+biz_ppp <- as.ppp(biz_sf_wgs)
+```
+
+```{r}
+setwd("C:/Users/HT Chen/Desktop/ISSS626/ISSS626-wp/Hands-on_Ex/Hands-on_Ex02")
+mpsz_sf <- st_read("data/geospatial/MasterPlan2019SubzoneBoundaryNoSeaKML (1).kml") %>% 
+  st_zm(drop = TRUE, what = "ZM") %>% st_transform(crs = 3414)
+```
+
+```{r}
+extract_kml_field <- function(html_text, field_name) {
+  if (is.na(html_text) || html_text == "") return(NA_character_)
+  
+  page <- read_html(html_text)
+  rows <- page %>% html_elements("tr")
+  
+  value <- rows %>%
+    keep(~ html_text2(html_element(.x, "th")) == field_name) %>%
+    html_element("td") %>%
+    html_text2()
+  
+  if (length(value) == 0) NA_character_ else value
+}
+```
+
+```{r}
+mpsz_sf <- mpsz_sf %>%
+  dplyr::mutate(
+    REGION_N = map_chr(Description, extract_kml_field, "REGION_N"),
+    PLN_AREA_N = map_chr(Description, extract_kml_field, "PLN_AREA_N"),
+    SUBZONE_N = map_chr(Description, extract_kml_field, "SUBZONE_N"),
+    SUBZONE_C = map_chr(Description, extract_kml_field, "SUBZONE_C")
+  ) %>%
+  dplyr::select(-Name, -Description) %>%
+  relocate(geometry, .after = last_col())
+```
+
+```{r}
+mpsz_cl <- mpsz_sf %>%
+  filter(SUBZONE_N != "SOUTHERN GROUP",
+         PLN_AREA_N != "WESTERN ISLANDS",
+         PLN_AREA_N != "NORTH-EASTERN ISLANDS") %>%
+  st_geometry(mpsz_sf)
+```
+
+```{r}
+mpsz_cl <- as.owin(mpsz_cl)
+```
+
+```{r}
+plot(mpsz_cl)
+plot(biz_ppp, add = TRUE, pch = 16, cex = 0.4)
+```
+
+# Compute spatial and spatio-temporal KDE of the selected business types
+
+```{r}
+biz_ppp_clip <- biz_ppp[mpsz_cl]
+summary(biz_ppp_clip)
+```
+
+```{r}
+dens <- density(biz_ppp_clip, sigma = 500)  
+plot(dens); points(biz_ppp_clip, pch = 16, cex = 0.2)
+```
+
+```{r}
+
+
+```
+
+```{r}
+
+t_raw <- as.Date(biz_56111$date)
+t0 <- min(t_raw, na.rm = TRUE)
+t_num <- as.numeric(t_raw - t0)
+
+```
+
+```{r}
+
+st_kde <- spattemp.density(
+  pp     = biz_ppp_clip,                         
+  tt     = t_num,                                
+  tlim   = range(t_num, na.rm = TRUE),           
+  h      = 800,                                  
+  lambda = 30                                    
+)
+
+summary(st_kde)
+plot(st_kde)
+
+  
+```
+
+### Improved Spatio-temporal KDE using Bootstrap Method
+
+```{r}
+set.seed(1234)
+boot_res <- BOOT.spattemp(
+  pp   = biz_ppp_clip,   # spatial ppp
+  tt   = t_num,          # time vector
+  tlim = range(t_num)    # time window
+)
+
+summary(boot_res)
+
+
+```
+
+```{r}
+st_kde <- spattemp.density(
+  pp     = biz_ppp_clip,                         
+  tt     = t_num,                                
+  tlim   = range(t_num, na.rm = TRUE),           
+  h      = 688,                                  
+  lambda = 197                                    
+)
+
+summary(st_kde)
+plot(st_kde)
+```
+
+# **Second Order Spatial Point Patterns Analysis Methods**
+
+```{r}
+Window(biz_ppp) <- mpsz_cl
+
+
+
+```
+
+```{r}
+
+mean_nn <- mean(nndist(biz_ppp))
+
+
+exp_nn <- 0.5 / sqrt(intensity(biz_ppp))
+
+
+NNI <- mean_nn / exp_nn
+NNI
+
+```
+
+```{r}
+G <- Gest(biz_ppp)
+plot(G, main="G-function (Nearest Neighbour Distribution)")
+
+
+```
+
+```{r}
+G_tm.csr <- envelope(biz_ppp, Gest, nsim = 99)
+```
+
+```{r}
+plot(G_tm.csr)
+```
+
+```{r}
+F <- Fest(biz_ppp)
+plot(F, main="F-function (Empty Space Distribution)")
+
+
+```
+
+```{r}
+F_CK.csr <- envelope(biz_ppp, Fest, nsim = 99)
+```
+
+```{r}
+plot(F_CK.csr)
+```
+
+```{r}
+K <- Kest(biz_ppp, correction = "border")
+plot(K, main="Ripley's K-function")
+
+```
+
+```{r}
+L <- Lest(biz_ppp, correction = "border")
+plot(L, main="Ripley's L-function")
+```
+
+![](images/clipboard-40922044.png)
+
+```{r}
+par(mfrow=c(2,2))
+plot(G, main="G-function")
+plot(F, main="F-function")
+plot(K, main="K-function")
+plot(L, main="L-function")
+par(mfrow=c(1,1))
+```
+
+# **Describe and discuss the analysis results obtained from Step 5 and 6**
+
+## **Anaylsis:**
+
+**First-order (KDE / hotspot):**\
+The spatio-temporal KDE highlights a persistent hotspot along Singapore’s south-eastern urban corridor—roughly the Kallang–Geylang–Paya Lebar–Marine Parade/East Coast belt—with a secondary node toward the eastern suburban–business fringe (around Bedok/Tampines/airport hinterland). Intensity peaks late in the study window (e.g., t≈546), suggesting recent acceleration of registrations there. Much of the north/west remains low-intensity.
+
+**Second-order (interaction):**
+
+1.G(r) (nearest-neighbour) rises far above the CSR reference almost from r≈0, showing many very short inter-point distances → strong clustering at fine scales.
+
+2.K(r) and L(r) sit well above the Poisson expectation across wide radii, confirming multi-scale clustering (not just micro-clumps). The right-edge dip is an edge effect.
+
+3.F(r) is close to (or slightly below) CSR at small–mid r—consistent with patchy clusters separated by empty space (urban land/sea mask and industrial/green buffers).\
+Together, these indicate clustered business formation concentrated in the south-east, with separation from low-opportunity areas elsewhere.
+
+# **For each geovisualisation prepared, write a short report of not more than 150 words describing the spatio-temporal patterns revealed by the geovisualisation and statistical graphics**
+
+## Short Report:
+
+\(a\) Spatio-temporal KDE (hotspot map)\
+The heat map shows sustained, intensifying hotspots along the south-eastern corridor (Kallang–Geylang–Paya Lebar–Marine Parade/East Coast), with a secondary pocket toward the eastern suburban–airport fringe. Cooler values dominate the north/west. Because the KDE integrates space and time, brighter cells near the end of the window indicate recent momentum in new firm registrations rather than historical residues. The pattern aligns with mixed-use density, MRT interchanges, expressway access, and mature retail/food clusters, suggesting agglomeration benefits and consumer footfall as key pull factors.
+
+\(b\) G-function with CSR\
+G\^(r)\hat G(r)G\^(r) rises sharply above CSR from r≈0, meaning nearest neighbours are much closer than random, a hallmark of fine-scale clustering. Different edge corrections overlap, so the finding is robust.
+
+\(c\) F-function with CSR\
+F\^(r)\hat F(r)F\^(r) tracks CSR overall but is slightly lower at small–mid r, implying more empty space between clusters than a homogeneous Poisson would yield—consistent with clusters separated by transport corridors, water bodies, parks and industrial buffers.
+
+\(d\) Ripley’s K/L\
+Both K\^(r)\hat K(r)K\^(r) and L\^(r)\hat L(r)L\^(r) exceed Poisson across broad r, confirming clustering across multiple spatial scales. The late-r fall is an edge artifact; the signal before that supports persistent agglomeration.
+
+# **Planning & management implications (≤500 words)**
+
+**Targeted zoning & site enablement:**\
+Since new firms concentrate along the south-eastern corridor, planners can up-zone or fine-tune mixed-use controls there (e.g., additional GFA for F&B/retail/creative uses), while streamlining change-of-use approvals for ground-floor units near MRT nodes (Paya Lebar, Dakota, Mountbatten, etc.). Where clusters abut residential areas, adopt graduated nuisance controls (operating hours/ventilation) instead of hard prohibitions to preserve vibrancy.
+
+**Transit & streetscape investments:**\
+Hotspots coincide with high accessibility. Prioritize first/last-mile improvements (wider footways, shade, cycling links, barrier-free crossings) and wayfinding/lighting to expand the effective catchment of clustered streets. Small grants for façade upgrades and shared dumpsters/grease traps reduce negative externalities from dense F&B streets.
+
+**Distributed growth strategy:**\
+Because second-order results show clusters separated by empty space, planners can seed new nodes by replicating the enabling conditions: curate affordable ground-floor stock, ensure visibility/footfall, and introduce anchor amenities (hawker/market upgrades, community hubs) in under-served towns (north/west). Pair with rent-stabilization tools or time-limited incentives to avoid premature displacement.
+
+**Industrial–commercial interface:**\
+The eastern secondary node suggests spillovers from logistics/airport activities. Safeguard last-mile logistics access and loading bays near emerging streets; use time-window management to balance deliveries and pedestrian comfort.
+
+**SME enablement & risk management:**\
+Where clustering is strongest, deploy shared services (waste oil collection, pest control, safety briefings), digital onboarding (licensing one-stop), and cluster-focused training (food hygiene, e-payments, cybersecurity for POS). Concentrated areas are also fraud/AML targets for cash-heavy trades—coordinate with agencies on risk-scored inspections and CCTV/lighting.
+
+**Monitoring & evaluation:**\
+Use the same KDE + G/F/K/L dashboard quarterly to track: (i) whether incentives create new nodes outside the south-east; (ii) whether clusters become too dense (amenity stress, complaints); and (iii) whether accessibility projects flatten spatial inequality. Add inhomogeneous K/L and marked analyses (industry, firm size) to separate market-driven agglomeration from zoning effects.
+
+**Bottom line:**\
+Singapore’s 2024–H1 2025 new-business geography reflects strong agglomeration in the south-east with multi-scale clustering and inter-cluster gaps. Planning should enable what works in the corridor, transplant the recipe to weaker towns, and actively manage externalities where density is highest.**\
+**
+
+{r}
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```         
+```
+
+```{r}
+
+
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
