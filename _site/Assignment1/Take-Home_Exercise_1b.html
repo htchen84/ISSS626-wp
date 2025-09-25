@@ -7,6 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="HTC">
+<meta name="dcterms.date" content="2025-09-15">
 
 <title>Take-Home_Exercise_1b – ISSS626-wp</title>
 <style>
@@ -20,6 +21,41 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -143,7 +179,7 @@ ul.task-list li input[type="checkbox"] {
   </li>  
         <li>
     <a class="dropdown-item" href="../Assignment1/Take-Home_Exercise_1.html">
- <span class="dropdown-text">Take-Home Exercise1b_Publishing_of_Games</span></a>
+ <span class="dropdown-text">Take-Home Exercise1b_Food Kiosks</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../Assignment1/Take-Home_Exercise_1.html">
@@ -172,8 +208,34 @@ ul.task-list li input[type="checkbox"] {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="99">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#overview" id="toc-overview" class="nav-link active" data-scroll-target="#overview">Overview</a>
+  <ul>
+  <li><a href="#this-is-take-home-exercise-1-1.1" id="toc-this-is-take-home-exercise-1-1.1" class="nav-link" data-scroll-target="#this-is-take-home-exercise-1-1.1">This is Take-Home Exercise 1, 1.1</a></li>
+  </ul></li>
+  <li><a href="#importing-packages" id="toc-importing-packages" class="nav-link" data-scroll-target="#importing-packages">Importing Packages</a></li>
+  <li><a href="#data-wrangling" id="toc-data-wrangling" class="nav-link" data-scroll-target="#data-wrangling">Data Wrangling</a>
+  <ul>
+  <li><a href="#ssic-codefood-kiosks-mainly-for-takeaway-and-delivery-within-specific-timeframe" id="toc-ssic-codefood-kiosks-mainly-for-takeaway-and-delivery-within-specific-timeframe" class="nav-link" data-scroll-target="#ssic-codefood-kiosks-mainly-for-takeaway-and-delivery-within-specific-timeframe">SSIC Code(Food kiosks mainly for takeaway and delivery) within Specific Timeframe</a></li>
+  <li><a href="#geocode-and-simple-point-features-conversion" id="toc-geocode-and-simple-point-features-conversion" class="nav-link" data-scroll-target="#geocode-and-simple-point-features-conversion">Geocode and Simple Point Features Conversion</a></li>
+  </ul></li>
+  <li><a href="#compute-spatial-and-spatio-temporal-kde-of-the-selected-business-types" id="toc-compute-spatial-and-spatio-temporal-kde-of-the-selected-business-types" class="nav-link" data-scroll-target="#compute-spatial-and-spatio-temporal-kde-of-the-selected-business-types">Compute spatial and spatio-temporal KDE of the selected business types</a></li>
+  <li><a href="#second-order-spatial-point-patterns-analysis-methods" id="toc-second-order-spatial-point-patterns-analysis-methods" class="nav-link" data-scroll-target="#second-order-spatial-point-patterns-analysis-methods"><strong>Second Order Spatial Point Patterns Analysis Methods</strong></a></li>
+  <li><a href="#describe-and-discuss-the-analysis-results-obtained-from-step-5-and-6" id="toc-describe-and-discuss-the-analysis-results-obtained-from-step-5-and-6" class="nav-link" data-scroll-target="#describe-and-discuss-the-analysis-results-obtained-from-step-5-and-6"><strong>Describe and discuss the analysis results obtained from Step 5 and 6</strong></a>
+  <ul>
+  <li><a href="#anaylsis" id="toc-anaylsis" class="nav-link" data-scroll-target="#anaylsis"><strong>Anaylsis:</strong></a></li>
+  </ul></li>
+  <li><a href="#for-each-geovisualisation-prepared-write-a-short-report-of-not-more-than-150-words-describing-the-spatio-temporal-patterns-revealed-by-the-geovisualisation-and-statistical-graphics" id="toc-for-each-geovisualisation-prepared-write-a-short-report-of-not-more-than-150-words-describing-the-spatio-temporal-patterns-revealed-by-the-geovisualisation-and-statistical-graphics" class="nav-link" data-scroll-target="#for-each-geovisualisation-prepared-write-a-short-report-of-not-more-than-150-words-describing-the-spatio-temporal-patterns-revealed-by-the-geovisualisation-and-statistical-graphics"><strong>For each geovisualisation prepared, write a short report of not more than 150 words describing the spatio-temporal patterns revealed by the geovisualisation and statistical graphics</strong></a>
+  <ul>
+  <li><a href="#short-report" id="toc-short-report" class="nav-link" data-scroll-target="#short-report">Short Report:</a></li>
+  </ul></li>
+  <li><a href="#planning-management-implications-500-words" id="toc-planning-management-implications-500-words" class="nav-link" data-scroll-target="#planning-management-implications-500-words"><strong>Planning &amp; management implications (≤500 words)</strong></a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -194,7 +256,19 @@ ul.task-list li input[type="checkbox"] {
           </div>
   </div>
     
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">September 15, 2025</p>
+    </div>
+  </div>
   
+    <div>
+    <div class="quarto-title-meta-heading">Modified</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date-modified">September 25, 2025</p>
+    </div>
+  </div>
     
   </div>
   
@@ -203,8 +277,4575 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
+<section id="overview" class="level1">
+<h1>Overview</h1>
+<section id="this-is-take-home-exercise-1-1.1" class="level3">
+<h3 class="anchored" data-anchor-id="this-is-take-home-exercise-1-1.1">This is Take-Home Exercise 1, 1.1</h3>
+</section>
+</section>
+<section id="importing-packages" class="level1">
+<h1>Importing Packages</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(sf, tidyverse, dplyr, lubridate, httr, tmap,purrr,raster, sparr,rvest,spatstat.geom, spatstat.core)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="data-wrangling" class="level1">
+<h1>Data Wrangling</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">setwd</span>(<span class="st">"C:/Users/HT Chen/Desktop/ISSS626/ISSS626-wp/Assignment1"</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>folder_path <span class="ot">&lt;-</span> <span class="st">"data/ACRAInformationonCorporateEntities"</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>file_list <span class="ot">&lt;-</span> <span class="fu">list.files</span>(<span class="at">path =</span> folder_path,</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>                        <span class="at">pattern =</span> <span class="st">"^ACRA*.*</span><span class="sc">\\</span><span class="st">.csv$"</span>,</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>                        <span class="at">full.names =</span><span class="cn">TRUE</span>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>acra_data <span class="ot">&lt;-</span> file_list <span class="sc">%&gt;%</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map_dfr</span>(read_csv)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">setwd</span>(<span class="st">"C:/Users/HT Chen/Desktop/ISSS626/ISSS626-wp/Assignment1"</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">write_rds</span>(acra_data,</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>          <span class="st">"data/acra_data.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="ssic-codefood-kiosks-mainly-for-takeaway-and-delivery-within-specific-timeframe" class="level3">
+<h3 class="anchored" data-anchor-id="ssic-codefood-kiosks-mainly-for-takeaway-and-delivery-within-specific-timeframe">SSIC Code(Food kiosks mainly for takeaway and delivery) within Specific Timeframe</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>biz_56123 <span class="ot">&lt;-</span> acra_data <span class="sc">%&gt;%</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">24</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(primary_ssic_code <span class="sc">==</span><span class="dv">56123</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">date =</span> registration_incorporation_date) <span class="sc">%&gt;%</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">date =</span> <span class="fu">as.Date</span>(date),</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">YEAR =</span> <span class="fu">year</span>(date),</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">MONTH_NUM =</span> <span class="fu">month</span>(date),</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>         <span class="at">MONTH_ABBR =</span> <span class="fu">month</span>(date,<span class="at">label =</span> <span class="cn">TRUE</span>, <span class="at">abbr =</span> <span class="cn">TRUE</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">postal_code =</span> <span class="fu">str_pad</span>(postal_code,</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">width =</span> <span class="dv">6</span>, <span class="at">side =</span> <span class="st">"left"</span>, <span class="at">pad =</span> <span class="st">"0"</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>          <span class="fu">filter</span>((YEAR <span class="sc">==</span> <span class="dv">2024</span> <span class="sc">&amp;</span> MONTH_NUM <span class="sc">&gt;=</span> <span class="dv">1</span>) <span class="sc">|</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>         (YEAR <span class="sc">==</span> <span class="dv">2025</span> <span class="sc">&amp;</span> MONTH_NUM <span class="sc">&lt;=</span> <span class="dv">6</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>postcodes <span class="ot">&lt;-</span> <span class="fu">unique</span>(biz_56123<span class="sc">$</span>postal_code)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>url <span class="ot">&lt;-</span> <span class="st">"https://onemap.gov.sg/api/common/elastic/search"</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>found <span class="ot">&lt;-</span> <span class="fu">data.frame</span>()</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>not_found <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">postcode =</span> <span class="fu">character</span>())</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (pc <span class="cf">in</span> postcodes) {</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  query <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">searchVal =</span> pc,</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">returnGeom =</span> <span class="st">"Y"</span>,</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">getAddrDetails =</span> <span class="st">"y"</span>,</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">pageNum =</span> <span class="st">"1"</span>)</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>  res <span class="ot">&lt;-</span> <span class="fu">GET</span> (url, <span class="at">query =</span> query) </span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>  json <span class="ot">&lt;-</span> <span class="fu">content</span>(res)</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (json<span class="sc">$</span>found <span class="sc">!=</span> <span class="dv">0</span>) {</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>    df <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(json<span class="sc">$</span>results, <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span>) </span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>    df<span class="sc">$</span>input_postcode <span class="ot">&lt;-</span> pc </span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>    found <span class="ot">&lt;-</span> <span class="fu">bind_rows</span> (found, df)</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>not_found <span class="ot">&lt;-</span> <span class="fu">bind_rows</span> (not_found, <span class="fu">data.frame</span>(<span class="at">postcode =</span> pc))</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>}}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>biz_56123 <span class="ot">=</span> biz_56123 <span class="sc">%&gt;%</span> </span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(found,</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">by =</span> <span class="fu">c</span>(<span class="st">'postal_code'</span> <span class="ot">=</span> <span class="st">'POSTAL'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="geocode-and-simple-point-features-conversion" class="level3">
+<h3 class="anchored" data-anchor-id="geocode-and-simple-point-features-conversion">Geocode and Simple Point Features Conversion</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>biz_geo <span class="ot">&lt;-</span> biz_56123 <span class="sc">%&gt;%</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">postal_code =</span> <span class="fu">str_pad</span>(<span class="fu">as.character</span>(postal_code), <span class="dv">6</span>, <span class="at">pad =</span> <span class="st">"0"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(found <span class="sc">%&gt;%</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>              <span class="fu">mutate</span>(<span class="at">POSTAL =</span> <span class="fu">str_pad</span>(<span class="fu">as.character</span>(POSTAL), <span class="dv">6</span>, <span class="at">pad =</span> <span class="st">"0"</span>)),</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"postal_code"</span> <span class="ot">=</span> <span class="st">"POSTAL"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>biz_geo <span class="ot">&lt;-</span> biz_geo <span class="sc">%&gt;%</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(LONGITUDE.x), <span class="sc">!</span><span class="fu">is.na</span>(LATITUDE.x))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">#colnames(biz_geo)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co">#colSums(is.na(biz_geo))</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(biz_geo)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 484
+Columns: 227
+$ uen                               &lt;chr&gt; "202411338G", "202411609D", "2024136…
+$ issuance_agency_id                &lt;chr&gt; "ACRA", "ACRA", "ACRA", "ACRA", "ACR…
+$ entity_name                       &lt;chr&gt; "ALKEMY PTE. LTD.", "ANNAMAYAN FOODS…
+$ entity_type_description           &lt;chr&gt; "Local Company", "Local Company", "L…
+$ business_constitution_description &lt;chr&gt; "na", "na", "na", "na", "na", "na", …
+$ company_type_description          &lt;chr&gt; "Exempt Private Company Limited by S…
+$ paf_constitution_description      &lt;chr&gt; "na", "na", "na", "na", "na", "na", …
+$ entity_status_description         &lt;chr&gt; "Live Company", "Struck Off", "Live …
+$ date                              &lt;date&gt; 2024-03-21, 2024-03-24, 2024-04-07,…
+$ uen_issue_date                    &lt;date&gt; 2024-03-21, 2024-03-24, 2024-04-07,…
+$ address_type                      &lt;chr&gt; "LOCAL", "LOCAL", "LOCAL", "LOCAL", …
+$ block                             &lt;chr&gt; "16", "208", "446", "60", "3015", "9…
+$ street_name                       &lt;chr&gt; "RAFFLES QUAY", "BUKIT BATOK STREET …
+$ level_no                          &lt;chr&gt; "41", "09", "06", "07", "01", "05", …
+$ unit_no                           &lt;chr&gt; "07", "138", "1629", "54", "03", "52…
+$ building_name                     &lt;chr&gt; "HONG LEONG BUILDING", "BUKIT BATOK …
+$ postal_code                       &lt;chr&gt; "048581", "650208", "530446", "40905…
+$ other_address_line1               &lt;chr&gt; "na", "na", "na", "na", "na", "na", …
+$ other_address_line2               &lt;chr&gt; "na", "na", "na", "na", "na", "na", …
+$ account_due_date                  &lt;chr&gt; "2025-07-31", "2025-10-31", "2025-02…
+$ annual_return_date                &lt;chr&gt; "na", "na", "na", "na", "na", "na", …
+$ primary_ssic_code                 &lt;dbl&gt; 56123, 56123, 56123, 56123, 56123, 5…
+$ primary_ssic_description          &lt;chr&gt; "WAFFLES, PANCAKES, COFFEE, BEVERAGE…
+$ primary_user_described_activity   &lt;chr&gt; "na", "na", "na", "na", "na", "na", …
+$ YEAR                              &lt;dbl&gt; 2024, 2024, 2024, 2024, 2024, 2024, …
+$ MONTH_NUM                         &lt;dbl&gt; 3, 3, 4, 8, 8, 9, 10, 1, 1, 3, 4, 4,…
+$ MONTH_ABBR                        &lt;ord&gt; Mar, Mar, Apr, Aug, Aug, Sep, Oct, J…
+$ SEARCHVAL.x                       &lt;chr&gt; "EMBASSY OF THE REPUBLIC OF PANAMA",…
+$ BLK_NO.x                          &lt;chr&gt; "16", "208", "446", "60", "3015", "9…
+$ ROAD_NAME.x                       &lt;chr&gt; "RAFFLES QUAY", "BUKIT BATOK STREET …
+$ BUILDING.x                        &lt;chr&gt; "EMBASSY OF THE REPUBLIC OF PANAMA",…
+$ ADDRESS.x                         &lt;chr&gt; "16 RAFFLES QUAY EMBASSY OF THE REPU…
+$ X.x                               &lt;chr&gt; "29958.79157208", "18595.3245478645"…
+$ Y.x                               &lt;chr&gt; "29312.1383166611", "36448.806300457…
+$ LATITUDE.x                        &lt;chr&gt; "1.28136301224216", "1.3459031054513…
+$ LONGITUDE.x                       &lt;chr&gt; "103.850919074926", "103.74881181439…
+$ SEARCHVAL.1.x                     &lt;chr&gt; "HONG LEONG BUILDING", NA, "HDB PUBL…
+$ BLK_NO.1.x                        &lt;chr&gt; "16", NA, "446", NA, NA, NA, "39A", …
+$ ROAD_NAME.1.x                     &lt;chr&gt; "RAFFLES QUAY", NA, "HOUGANG AVENUE …
+$ BUILDING.1.x                      &lt;chr&gt; "HONG LEONG BUILDING", NA, "HDB PUBL…
+$ ADDRESS.1.x                       &lt;chr&gt; "16 RAFFLES QUAY HONG LEONG BUILDING…
+$ POSTAL.1.x                        &lt;chr&gt; "048581", NA, "530446", NA, NA, NA, …
+$ X.1.x                             &lt;chr&gt; "29958.2789232396", NA, "34784.43355…
+$ Y.1.x                             &lt;chr&gt; "29312.2032112181", NA, "40085.52827…
+$ LATITUDE.1.x                      &lt;chr&gt; "1.28136359915756", NA, "1.378793010…
+$ LONGITUDE.1.x                     &lt;chr&gt; "103.850914468583", NA, "103.8942817…
+$ SEARCHVAL.2.x                     &lt;chr&gt; "ROYAL NORWEGIAN EMBASSY", NA, NA, N…
+$ BLK_NO.2.x                        &lt;chr&gt; "16", NA, NA, NA, NA, NA, "39A", NA,…
+$ ROAD_NAME.2.x                     &lt;chr&gt; "RAFFLES QUAY", NA, NA, NA, NA, NA, …
+$ BUILDING.2.x                      &lt;chr&gt; "ROYAL NORWEGIAN EMBASSY", NA, NA, N…
+$ ADDRESS.2.x                       &lt;chr&gt; "16 RAFFLES QUAY ROYAL NORWEGIAN EMB…
+$ POSTAL.2.x                        &lt;chr&gt; "048581", NA, NA, NA, NA, NA, "57718…
+$ X.2.x                             &lt;chr&gt; "29958.79157208", NA, NA, NA, NA, NA…
+$ Y.2.x                             &lt;chr&gt; "29312.1383166611", NA, NA, NA, NA, …
+$ LATITUDE.2.x                      &lt;chr&gt; "1.28136301224216", NA, NA, NA, NA, …
+$ LONGITUDE.2.x                     &lt;chr&gt; "103.850919074926", NA, NA, NA, NA, …
+$ input_postcode.x                  &lt;chr&gt; "048581", "650208", "530446", "40905…
+$ SEARCHVAL.3.x                     &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ BLK_NO.3.x                        &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ ROAD_NAME.3.x                     &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ BUILDING.3.x                      &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ ADDRESS.3.x                       &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ POSTAL.3.x                        &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ X.3.x                             &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ Y.3.x                             &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ LATITUDE.3.x                      &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ LONGITUDE.3.x                     &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ SEARCHVAL.4.x                     &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ BLK_NO.4.x                        &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ ROAD_NAME.4.x                     &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ BUILDING.4.x                      &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ ADDRESS.4.x                       &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ POSTAL.4.x                        &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ X.4.x                             &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ Y.4.x                             &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ LATITUDE.4.x                      &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ LONGITUDE.4.x                     &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ SEARCHVAL.5.x                     &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ BLK_NO.5.x                        &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ ROAD_NAME.5.x                     &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ BUILDING.5.x                      &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ ADDRESS.5.x                       &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ POSTAL.5.x                        &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ X.5.x                             &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ Y.5.x                             &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ LATITUDE.5.x                      &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ LONGITUDE.5.x                     &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ SEARCHVAL.6.x                     &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ BLK_NO.6.x                        &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ ROAD_NAME.6.x                     &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ BUILDING.6.x                      &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ ADDRESS.6.x                       &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ POSTAL.6.x                        &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ X.6.x                             &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ Y.6.x                             &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ LATITUDE.6.x                      &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ LONGITUDE.6.x                     &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ SEARCHVAL.7.x                     &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ BLK_NO.7.x                        &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ ROAD_NAME.7.x                     &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ BUILDING.7.x                      &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ ADDRESS.7.x                       &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ POSTAL.7.x                        &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ X.7.x                             &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ Y.7.x                             &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ LATITUDE.7.x                      &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ LONGITUDE.7.x                     &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ SEARCHVAL.8.x                     &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ BLK_NO.8.x                        &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ ROAD_NAME.8.x                     &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ BUILDING.8.x                      &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ ADDRESS.8.x                       &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ POSTAL.8.x                        &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ X.8.x                             &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ Y.8.x                             &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ LATITUDE.8.x                      &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ LONGITUDE.8.x                     &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ SEARCHVAL.9.x                     &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ BLK_NO.9.x                        &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ ROAD_NAME.9.x                     &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ BUILDING.9.x                      &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ ADDRESS.9.x                       &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ POSTAL.9.x                        &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ X.9.x                             &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ Y.9.x                             &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ LATITUDE.9.x                      &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ LONGITUDE.9.x                     &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ SEARCHVAL.y                       &lt;chr&gt; "EMBASSY OF THE REPUBLIC OF PANAMA",…
+$ BLK_NO.y                          &lt;chr&gt; "16", "208", "446", "60", "3015", "9…
+$ ROAD_NAME.y                       &lt;chr&gt; "RAFFLES QUAY", "BUKIT BATOK STREET …
+$ BUILDING.y                        &lt;chr&gt; "EMBASSY OF THE REPUBLIC OF PANAMA",…
+$ ADDRESS.y                         &lt;chr&gt; "16 RAFFLES QUAY EMBASSY OF THE REPU…
+$ X.y                               &lt;chr&gt; "29958.79157208", "18595.3245478645"…
+$ Y.y                               &lt;chr&gt; "29312.1383166611", "36448.806300457…
+$ LATITUDE.y                        &lt;chr&gt; "1.28136301224216", "1.3459031054513…
+$ LONGITUDE.y                       &lt;chr&gt; "103.850919074926", "103.74881181439…
+$ SEARCHVAL.1.y                     &lt;chr&gt; "HONG LEONG BUILDING", NA, "HDB PUBL…
+$ BLK_NO.1.y                        &lt;chr&gt; "16", NA, "446", NA, NA, NA, "39A", …
+$ ROAD_NAME.1.y                     &lt;chr&gt; "RAFFLES QUAY", NA, "HOUGANG AVENUE …
+$ BUILDING.1.y                      &lt;chr&gt; "HONG LEONG BUILDING", NA, "HDB PUBL…
+$ ADDRESS.1.y                       &lt;chr&gt; "16 RAFFLES QUAY HONG LEONG BUILDING…
+$ POSTAL.1.y                        &lt;chr&gt; "048581", NA, "530446", NA, NA, NA, …
+$ X.1.y                             &lt;chr&gt; "29958.2789232396", NA, "34784.43355…
+$ Y.1.y                             &lt;chr&gt; "29312.2032112181", NA, "40085.52827…
+$ LATITUDE.1.y                      &lt;chr&gt; "1.28136359915756", NA, "1.378793010…
+$ LONGITUDE.1.y                     &lt;chr&gt; "103.850914468583", NA, "103.8942817…
+$ SEARCHVAL.2.y                     &lt;chr&gt; "ROYAL NORWEGIAN EMBASSY", NA, NA, N…
+$ BLK_NO.2.y                        &lt;chr&gt; "16", NA, NA, NA, NA, NA, "39A", NA,…
+$ ROAD_NAME.2.y                     &lt;chr&gt; "RAFFLES QUAY", NA, NA, NA, NA, NA, …
+$ BUILDING.2.y                      &lt;chr&gt; "ROYAL NORWEGIAN EMBASSY", NA, NA, N…
+$ ADDRESS.2.y                       &lt;chr&gt; "16 RAFFLES QUAY ROYAL NORWEGIAN EMB…
+$ POSTAL.2.y                        &lt;chr&gt; "048581", NA, NA, NA, NA, NA, "57718…
+$ X.2.y                             &lt;chr&gt; "29958.79157208", NA, NA, NA, NA, NA…
+$ Y.2.y                             &lt;chr&gt; "29312.1383166611", NA, NA, NA, NA, …
+$ LATITUDE.2.y                      &lt;chr&gt; "1.28136301224216", NA, NA, NA, NA, …
+$ LONGITUDE.2.y                     &lt;chr&gt; "103.850919074926", NA, NA, NA, NA, …
+$ input_postcode.y                  &lt;chr&gt; "048581", "650208", "530446", "40905…
+$ SEARCHVAL.3.y                     &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ BLK_NO.3.y                        &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ ROAD_NAME.3.y                     &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ BUILDING.3.y                      &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ ADDRESS.3.y                       &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ POSTAL.3.y                        &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ X.3.y                             &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ Y.3.y                             &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ LATITUDE.3.y                      &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ LONGITUDE.3.y                     &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ SEARCHVAL.4.y                     &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ BLK_NO.4.y                        &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ ROAD_NAME.4.y                     &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ BUILDING.4.y                      &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ ADDRESS.4.y                       &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ POSTAL.4.y                        &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ X.4.y                             &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ Y.4.y                             &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ LATITUDE.4.y                      &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ LONGITUDE.4.y                     &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ SEARCHVAL.5.y                     &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ BLK_NO.5.y                        &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ ROAD_NAME.5.y                     &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ BUILDING.5.y                      &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ ADDRESS.5.y                       &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ POSTAL.5.y                        &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ X.5.y                             &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ Y.5.y                             &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ LATITUDE.5.y                      &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ LONGITUDE.5.y                     &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ SEARCHVAL.6.y                     &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ BLK_NO.6.y                        &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ ROAD_NAME.6.y                     &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ BUILDING.6.y                      &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ ADDRESS.6.y                       &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ POSTAL.6.y                        &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ X.6.y                             &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ Y.6.y                             &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ LATITUDE.6.y                      &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ LONGITUDE.6.y                     &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ SEARCHVAL.7.y                     &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ BLK_NO.7.y                        &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ ROAD_NAME.7.y                     &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ BUILDING.7.y                      &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ ADDRESS.7.y                       &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ POSTAL.7.y                        &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ X.7.y                             &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ Y.7.y                             &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ LATITUDE.7.y                      &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ LONGITUDE.7.y                     &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ SEARCHVAL.8.y                     &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ BLK_NO.8.y                        &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ ROAD_NAME.8.y                     &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ BUILDING.8.y                      &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ ADDRESS.8.y                       &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ POSTAL.8.y                        &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ X.8.y                             &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ Y.8.y                             &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ LATITUDE.8.y                      &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ LONGITUDE.8.y                     &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ SEARCHVAL.9.y                     &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ BLK_NO.9.y                        &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ ROAD_NAME.9.y                     &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ BUILDING.9.y                      &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ ADDRESS.9.y                       &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ POSTAL.9.y                        &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ X.9.y                             &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ Y.9.y                             &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ LATITUDE.9.y                      &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+$ LONGITUDE.9.y                     &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, …</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>biz_sf_wgs <span class="ot">&lt;-</span> <span class="fu">st_as_sf</span>(biz_geo,</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>                       <span class="at">coords =</span> <span class="fu">c</span>(<span class="st">"LONGITUDE.x"</span>, <span class="st">"LATITUDE.x"</span>),</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>                       <span class="at">crs =</span> <span class="dv">4326</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_transform</span>(<span class="at">crs =</span> <span class="dv">3414</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_geometry</span>(biz_geo)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>biz_ppp <span class="ot">&lt;-</span> <span class="fu">as.ppp</span>(biz_sf_wgs)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">setwd</span>(<span class="st">"C:/Users/HT Chen/Desktop/ISSS626/ISSS626-wp/Hands-on_Ex/Hands-on_Ex02"</span>)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>mpsz_sf <span class="ot">&lt;-</span> <span class="fu">st_read</span>(<span class="st">"data/geospatial/MasterPlan2019SubzoneBoundaryNoSeaKML (1).kml"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_zm</span>(<span class="at">drop =</span> <span class="cn">TRUE</span>, <span class="at">what =</span> <span class="st">"ZM"</span>) <span class="sc">%&gt;%</span> <span class="fu">st_transform</span>(<span class="at">crs =</span> <span class="dv">3414</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Reading layer `URA_MP19_SUBZONE_NO_SEA_PL' from data source 
+  `C:\Users\HT Chen\Desktop\ISSS626\ISSS626-wp\Hands-on_Ex\Hands-on_Ex02\data\geospatial\MasterPlan2019SubzoneBoundaryNoSeaKML (1).kml' 
+  using driver `KML'
+Simple feature collection with 332 features and 2 fields
+Geometry type: MULTIPOLYGON
+Dimension:     XY
+Bounding box:  xmin: 103.6057 ymin: 1.158699 xmax: 104.0885 ymax: 1.470775
+Geodetic CRS:  WGS 84</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>extract_kml_field <span class="ot">&lt;-</span> <span class="cf">function</span>(html_text, field_name) {</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">is.na</span>(html_text) <span class="sc">||</span> html_text <span class="sc">==</span> <span class="st">""</span>) <span class="fu">return</span>(<span class="cn">NA_character_</span>)</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  page <span class="ot">&lt;-</span> <span class="fu">read_html</span>(html_text)</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>  rows <span class="ot">&lt;-</span> page <span class="sc">%&gt;%</span> <span class="fu">html_elements</span>(<span class="st">"tr"</span>)</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>  value <span class="ot">&lt;-</span> rows <span class="sc">%&gt;%</span></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">keep</span>(<span class="sc">~</span> <span class="fu">html_text2</span>(<span class="fu">html_element</span>(.x, <span class="st">"th"</span>)) <span class="sc">==</span> field_name) <span class="sc">%&gt;%</span></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">html_element</span>(<span class="st">"td"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">html_text2</span>()</span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">length</span>(value) <span class="sc">==</span> <span class="dv">0</span>) <span class="cn">NA_character_</span> <span class="cf">else</span> value</span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>mpsz_sf <span class="ot">&lt;-</span> mpsz_sf <span class="sc">%&gt;%</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">REGION_N =</span> <span class="fu">map_chr</span>(Description, extract_kml_field, <span class="st">"REGION_N"</span>),</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">PLN_AREA_N =</span> <span class="fu">map_chr</span>(Description, extract_kml_field, <span class="st">"PLN_AREA_N"</span>),</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">SUBZONE_N =</span> <span class="fu">map_chr</span>(Description, extract_kml_field, <span class="st">"SUBZONE_N"</span>),</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">SUBZONE_C =</span> <span class="fu">map_chr</span>(Description, extract_kml_field, <span class="st">"SUBZONE_C"</span>)</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span>Name, <span class="sc">-</span>Description) <span class="sc">%&gt;%</span></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">relocate</span>(geometry, <span class="at">.after =</span> <span class="fu">last_col</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>mpsz_cl <span class="ot">&lt;-</span> mpsz_sf <span class="sc">%&gt;%</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(SUBZONE_N <span class="sc">!=</span> <span class="st">"SOUTHERN GROUP"</span>,</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>         PLN_AREA_N <span class="sc">!=</span> <span class="st">"WESTERN ISLANDS"</span>,</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>         PLN_AREA_N <span class="sc">!=</span> <span class="st">"NORTH-EASTERN ISLANDS"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_geometry</span>(mpsz_sf)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>mpsz_cl <span class="ot">&lt;-</span> <span class="fu">as.owin</span>(mpsz_cl)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(mpsz_cl)</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(biz_ppp, <span class="at">add =</span> <span class="cn">TRUE</span>, <span class="at">pch =</span> <span class="dv">16</span>, <span class="at">cex =</span> <span class="fl">0.4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-20-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="compute-spatial-and-spatio-temporal-kde-of-the-selected-business-types" class="level1">
+<h1>Compute spatial and spatio-temporal KDE of the selected business types</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>biz_ppp_clip <span class="ot">&lt;-</span> biz_ppp[mpsz_cl]</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(biz_ppp_clip)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Planar point pattern:  484 points
+Average intensity 7.229095e-07 points per square unit
+
+*Pattern contains duplicated points*
+
+Coordinates are given to 11 decimal places
+
+Window: polygonal boundary
+41 separate polygons (26 holes)
+                  vertices         area relative.area
+polygon 1              285  1.61128e+06      2.41e-03
+polygon 2               27  1.50315e+04      2.25e-05
+polygon 3 (hole)        41 -4.01660e+04     -6.00e-05
+polygon 4 (hole)       317 -5.11280e+04     -7.64e-05
+polygon 5 (hole)         3 -4.14100e-04     -6.19e-13
+polygon 6               30  2.80002e+04      4.18e-05
+polygon 7 (hole)         4 -2.86396e-01     -4.28e-10
+polygon 8 (hole)         3 -1.81439e-04     -2.71e-13
+polygon 9 (hole)         3 -5.99531e-04     -8.95e-13
+polygon 10 (hole)        3 -3.04560e-04     -4.55e-13
+polygon 11 (hole)        3 -4.46108e-04     -6.66e-13
+polygon 12 (hole)        5 -2.44408e-04     -3.65e-13
+polygon 13 (hole)        5 -3.64686e-02     -5.45e-11
+polygon 14              71  8.18750e+03      1.22e-05
+polygon 15 (hole)       38 -7.79904e+03     -1.16e-05
+polygon 16              91  1.49663e+04      2.24e-05
+polygon 17 (hole)      395 -7.38124e+03     -1.10e-05
+polygon 18              40  1.38607e+04      2.07e-05
+polygon 19 (hole)       11 -8.36705e+01     -1.25e-07
+polygon 20 (hole)        3 -2.33435e-03     -3.49e-12
+polygon 21              45  2.51218e+03      3.75e-06
+polygon 22             139  3.22293e+03      4.81e-06
+polygon 23             148  3.10395e+03      4.64e-06
+polygon 24 (hole)        4 -1.72650e-04     -2.58e-13
+polygon 25              75  1.73526e+04      2.59e-05
+polygon 26              83  5.28920e+03      7.90e-06
+polygon 27             106  3.04104e+03      4.54e-06
+polygon 28              71  5.63061e+03      8.41e-06
+polygon 29              10  1.99717e+02      2.98e-07
+polygon 30 (hole)        3 -1.37223e-02     -2.05e-11
+polygon 31 (hole)        3 -8.68789e-04     -1.30e-12
+polygon 32 (hole)        3 -3.39815e-04     -5.08e-13
+polygon 33 (hole)        3 -4.52041e-05     -6.75e-14
+polygon 34 (hole)        3 -3.90173e-05     -5.83e-14
+polygon 35 (hole)        3 -9.59845e-05     -1.43e-13
+polygon 36 (hole)        8 -4.28707e-01     -6.40e-10
+polygon 37 (hole)        4 -2.18619e-04     -3.27e-13
+polygon 38 (hole)        6 -8.37554e-01     -1.25e-09
+polygon 39 (hole)        5 -2.92235e-04     -4.36e-13
+polygon 40           14053  6.67892e+08      9.98e-01
+polygon 41 (hole)        3 -7.43616e-06     -1.11e-14
+enclosing rectangle: [2667.54, 55941.94] x [21448.47, 50256.33] units
+                     (53270 x 28810 units)
+Window area = 669517000 square units
+Fraction of frame area: 0.436</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>dens <span class="ot">&lt;-</span> <span class="fu">density</span>(biz_ppp_clip, <span class="at">sigma =</span> <span class="dv">500</span>)  </span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(dens); <span class="fu">points</span>(biz_ppp_clip, <span class="at">pch =</span> <span class="dv">16</span>, <span class="at">cex =</span> <span class="fl">0.2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-22-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>t_raw <span class="ot">&lt;-</span> <span class="fu">as.Date</span>(biz_56123<span class="sc">$</span>date)</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>t0 <span class="ot">&lt;-</span> <span class="fu">min</span>(t_raw, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>t_num <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(t_raw <span class="sc">-</span> t0)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1234</span>)</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>boot_res <span class="ot">&lt;-</span> <span class="fu">BOOT.spattemp</span>(</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">pp   =</span> biz_ppp_clip,   <span class="co"># spatial ppp</span></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">tt   =</span> t_num,          <span class="co"># time vector</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">tlim =</span> <span class="fu">range</span>(t_num)    <span class="co"># time window</span></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Initialising...Done.
+Optimising...
+h = 2361.67 ; lambda = 53.05506 
+h = 2597.837 ; lambda = 53.05506 
+h = 2361.67 ; lambda = 289.2221 
+h = 2597.837 ; lambda = 289.2221 
+h = 2538.796 ; lambda = 230.1803 
+h = 2302.629 ; lambda = 466.3474 
+h = 2524.035 ; lambda = 156.3781 
+h = 2701.161 ; lambda = 97.33639 
+h = 2616.288 ; lambda = 145.3078 
+h = 2601.528 ; lambda = 71.50562 
+h = 2554.479 ; lambda = 190.5117 
+h = 2585.845 ; lambda = 111.1743 
+h = 2562.32 ; lambda = 170.6773 
+h = 2470.067 ; lambda = 181.7477 
+h = 2506.623 ; lambda = 172.6377 
+h = 2468.338 ; lambda = 158.3385 
+h = 2421.346 ; lambda = 152.1691 
+h = 2438.759 ; lambda = 135.9096 
+h = 2455.725 ; lambda = 145.0916 
+h = 2353.036 ; lambda = 140.8826 
+h = 2267.537 ; lambda = 133.1348 
+h = 2318.658 ; lambda = 147.9601 
+h = 2250.124 ; lambda = 149.3943 
+h = 2181.814 ; lambda = 138.1078 
+h = 2241.697 ; lambda = 141.6231 
+h = 2138.785 ; lambda = 150.1349 
+h = 2031.659 ; lambda = 154.761 
+h = 2040.086 ; lambda = 162.5322 
+h = 1939.28 ; lambda = 172.9868 
+h = 1821.621 ; lambda = 167.8989 
+h = 2142.998 ; lambda = 154.0205 
+h = 2151.425 ; lambda = 161.7917 
+h = 2121.484 ; lambda = 160.034 
+h = 2018.571 ; lambda = 168.5458 
+h = 2049.678 ; lambda = 164.9145 
+Done.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(boot_res)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  164.9   636.1  1107.3  1107.3  1578.5  2049.7 </code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>st_kde <span class="ot">&lt;-</span> <span class="fu">spattemp.density</span>(</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">pp     =</span> biz_ppp_clip,                         </span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">tt     =</span> t_num,                                </span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">tlim   =</span> <span class="fu">range</span>(t_num, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),           </span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">h      =</span> <span class="dv">2050</span>,                                  </span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">lambda =</span> <span class="dv">165</span>                                   </span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(st_kde)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Spatiotemporal Kernel Density Estimate
+
+Bandwidths
+  h = 2050 (spatial)
+  lambda = 165 (temporal)
+
+No. of observations
+  484 
+
+Spatial bound
+  Type: polygonal
+  2D enclosure: [2667.538, 55941.94] x [21448.47, 50256.33]
+
+Temporal bound
+  [0, 546]
+
+Evaluation
+  128 x 128 x 547 trivariate lattice
+  Density range: [5.034567e-25, 1.23992e-11]</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(st_kde)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-3.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-4.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-5.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-6.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-7.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-8.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-9.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-10.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-11.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-12.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-13.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-14.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-15.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-16.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-17.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-18.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-19.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-20.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-21.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-22.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-23.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-24.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-25.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-26.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-27.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-28.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-29.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-30.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-31.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-32.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-33.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-34.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-35.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-36.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-37.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-38.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-39.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-40.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-41.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-42.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-43.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-44.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-45.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-46.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-47.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-48.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-49.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-50.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-51.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-52.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-53.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-54.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-55.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-56.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-57.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-58.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-59.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-60.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-61.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-62.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-63.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-64.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-65.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-66.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-67.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-68.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-69.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-70.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-71.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-72.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-73.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-74.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-75.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-76.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-77.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-78.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-79.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-80.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-81.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-82.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-83.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-84.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-85.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-86.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-87.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-88.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-89.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-90.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-91.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-92.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-93.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-94.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-95.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-96.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-97.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-98.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-99.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-100.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-101.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-102.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-103.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-104.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-105.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-106.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-107.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-108.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-109.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-110.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-111.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-112.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-113.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-114.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-115.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-116.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-117.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-118.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-119.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-120.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-121.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-122.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-123.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-124.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-125.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-126.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-127.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-128.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-129.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-130.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-131.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-132.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-133.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-134.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-135.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-136.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-137.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-138.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-139.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-140.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-141.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-142.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-143.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-144.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-145.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-146.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-147.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-148.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-149.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-150.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-151.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-152.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-153.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-154.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-155.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-156.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-157.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-158.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-159.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-160.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-161.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-162.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-163.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-164.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-165.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-166.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-167.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-168.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-169.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-170.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-171.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-172.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-173.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-174.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-175.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-176.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-177.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-178.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-179.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-180.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-181.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-182.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-183.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-184.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-185.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-186.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-187.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-188.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-189.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-190.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-191.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-192.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-193.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-194.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-195.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-196.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-197.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-198.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-199.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-200.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-201.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-202.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-203.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-204.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-205.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-206.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-207.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-208.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-209.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-210.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-211.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-212.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-213.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-214.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-215.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-216.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-217.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-218.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-219.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-220.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-221.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-222.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-223.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-224.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-225.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-226.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-227.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-228.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-229.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-230.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-231.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-232.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-233.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-234.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-235.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-236.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-237.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-238.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-239.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-240.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-241.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-242.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-243.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-244.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-245.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-246.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-247.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-248.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-249.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-250.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-251.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-252.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-253.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-254.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-255.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-256.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-257.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-258.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-259.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-260.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-261.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-262.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-263.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-264.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-265.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-266.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-267.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-268.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-269.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-270.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-271.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-272.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-273.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-274.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-275.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-276.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-277.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-278.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-279.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-280.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-281.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-282.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-283.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-284.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-285.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-286.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-287.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-288.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-289.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-290.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-291.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-292.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-293.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-294.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-295.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-296.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-297.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-298.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-299.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-300.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-301.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-302.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-303.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-304.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-305.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-306.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-307.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-308.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-309.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-310.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-311.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-312.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-313.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-314.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-315.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-316.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-317.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-318.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-319.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-320.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-321.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-322.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-323.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-324.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-325.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-326.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-327.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-328.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-329.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-330.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-331.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-332.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-333.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-334.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-335.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-336.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-337.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-338.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-339.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-340.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-341.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-342.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-343.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-344.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-345.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-346.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-347.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-348.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-349.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-350.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-351.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-352.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-353.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-354.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-355.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-356.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-357.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-358.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-359.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-360.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-361.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-362.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-363.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-364.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-365.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-366.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-367.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-368.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-369.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-370.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-371.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-372.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-373.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-374.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-375.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-376.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-377.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-378.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-379.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-380.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-381.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-382.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-383.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-384.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-385.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-386.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-387.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-388.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-389.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-390.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-391.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-392.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-393.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-394.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-395.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-396.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-397.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-398.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-399.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-400.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-401.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-402.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-403.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-404.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-405.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-406.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-407.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-408.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-409.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-410.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-411.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-412.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-413.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-414.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-415.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-416.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-417.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-418.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-419.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-420.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-421.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-422.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-423.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-424.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-425.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-426.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-427.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-428.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-429.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-430.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-431.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-432.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-433.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-434.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-435.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-436.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-437.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-438.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-439.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-440.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-441.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-442.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-443.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-444.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-445.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-446.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-447.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-448.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-449.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-450.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-451.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-452.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-453.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-454.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-455.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-456.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-457.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-458.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-459.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-460.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-461.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-462.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-463.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-464.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-465.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-466.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-467.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-468.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-469.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-470.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-471.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-472.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-473.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-474.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-475.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-476.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-477.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-478.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-479.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-480.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-481.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-482.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-483.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-484.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-485.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-486.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-487.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-488.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-489.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-490.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-491.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-492.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-493.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-494.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-495.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-496.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-497.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-498.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-499.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-500.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-501.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-502.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-503.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-504.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-505.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-506.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-507.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-508.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-509.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-510.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-511.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-512.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-513.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-514.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-515.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-516.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-517.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-518.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-519.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-520.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-521.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-522.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-523.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-524.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-525.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-526.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-527.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-528.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-529.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-530.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-531.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-532.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-533.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-534.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-535.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-536.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-537.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-538.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-539.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-540.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-541.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-542.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-543.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-544.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-545.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-546.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-25-547.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="second-order-spatial-point-patterns-analysis-methods" class="level1">
+<h1><strong>Second Order Spatial Point Patterns Analysis Methods</strong></h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">Window</span>(biz_ppp) <span class="ot">&lt;-</span> mpsz_cl</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>mean_nn <span class="ot">&lt;-</span> <span class="fu">mean</span>(<span class="fu">nndist</span>(biz_ppp))</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>exp_nn <span class="ot">&lt;-</span> <span class="fl">0.5</span> <span class="sc">/</span> <span class="fu">sqrt</span>(<span class="fu">intensity</span>(biz_ppp))</span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>NNI <span class="ot">&lt;-</span> mean_nn <span class="sc">/</span> exp_nn</span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>NNI</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.5136985</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>G <span class="ot">&lt;-</span> <span class="fu">Gest</span>(biz_ppp)</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(G, <span class="at">main=</span><span class="st">"G-function (Nearest Neighbour Distribution)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-28-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>G_tm.csr <span class="ot">&lt;-</span> <span class="fu">envelope</span>(biz_ppp, Gest, <span class="at">nsim =</span> <span class="dv">99</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Generating 99 simulations of CSR  ...
+1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
+21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
+41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60,
+61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80,
+81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 
+99.
+
+Done.</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(G_tm.csr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-30-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>F <span class="ot">&lt;-</span> <span class="fu">Fest</span>(biz_ppp)</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(F, <span class="at">main=</span><span class="st">"F-function (Empty Space Distribution)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-31-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>F_CK.csr <span class="ot">&lt;-</span> <span class="fu">envelope</span>(biz_ppp, Fest, <span class="at">nsim =</span> <span class="dv">99</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Generating 99 simulations of CSR  ...
+1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
+21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
+41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60,
+61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80,
+81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 
+99.
+
+Done.</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(F_CK.csr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-33-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>K <span class="ot">&lt;-</span> <span class="fu">Kest</span>(biz_ppp, <span class="at">correction =</span> <span class="st">"border"</span>)</span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(K, <span class="at">main=</span><span class="st">"Ripley's K-function"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-34-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>L <span class="ot">&lt;-</span> <span class="fu">Lest</span>(biz_ppp, <span class="at">correction =</span> <span class="st">"border"</span>)</span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(L, <span class="at">main=</span><span class="st">"Ripley's L-function"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-36-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">2</span>))</span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(G, <span class="at">main=</span><span class="st">"G-function"</span>)</span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(F, <span class="at">main=</span><span class="st">"F-function"</span>)</span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(K, <span class="at">main=</span><span class="st">"K-function"</span>)</span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(L, <span class="at">main=</span><span class="st">"L-function"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-Home_Exercise_1b_files/figure-html/unnamed-chunk-37-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="describe-and-discuss-the-analysis-results-obtained-from-step-5-and-6" class="level1">
+<h1><strong>Describe and discuss the analysis results obtained from Step 5 and 6</strong></h1>
+<section id="anaylsis" class="level2">
+<h2 class="anchored" data-anchor-id="anaylsis"><strong>Anaylsis:</strong></h2>
+<p><strong>First-order (KDE / hotspot evolution):</strong><br>
+At <em>t = 0</em>, takeaway kiosks appear relatively dispersed, with emerging hotspots in the central and eastern regions. By <em>t = 353</em>, intensities sharpen in the eastern corridor (Bedok, Tampines, Pasir Ris) and in southern-central Singapore (Geylang, Kallang, Queenstown). The shift suggests that kiosk growth is increasingly concentrated near dense residential estates and transport interchanges, consistent with high demand for delivery services.</p>
+<p><strong>Second-order (interaction):</strong></p>
+<p>G-function rises above CSR expectations at very short distances, showing that kiosks are clustered at fine scales, forming dense micro-hubs around key neighborhoods.</p>
+<p>F-function indicates slightly more clustering than CSR at intermediate distances, though gaps still exist between clusters, likely reflecting zoning and residential distribution.</p>
+<p>Ripley’s K and L functions consistently exceed Poisson expectations at multiple scales, confirming multi-scale clustering (small local clusters embedded in larger regional structures).<br>
+Together, the results reveal clear clustering of takeaway kiosks aligned with residential demand and delivery logistics, rather than random or evenly spread locations.</p>
+</section>
+</section>
+<section id="for-each-geovisualisation-prepared-write-a-short-report-of-not-more-than-150-words-describing-the-spatio-temporal-patterns-revealed-by-the-geovisualisation-and-statistical-graphics" class="level1">
+<h1><strong>For each geovisualisation prepared, write a short report of not more than 150 words describing the spatio-temporal patterns revealed by the geovisualisation and statistical graphics</strong></h1>
+<section id="short-report" class="level2">
+<h2 class="anchored" data-anchor-id="short-report">Short Report:</h2>
+<p><strong>(a) Spatio-temporal KDE (hotspot maps)</strong><br>
+The KDE maps show that food kiosks are not randomly distributed but concentrate around dense residential and transport corridors. Over time, hotspots strengthen in eastern and central Singapore, with new growth observed in Bedok–Tampines–Pasir Ris and sustained density in southern central areas (Geylang, Kallang, Queenstown). This suggests kiosks follow population density and delivery demand hubs, while remaining sparse in the north and west.</p>
+<p><strong>(b) G-function with CSR</strong><br>
+The observed G(r) rises far more steeply than CSR, showing kiosks tend to have closer nearest neighbors than expected. This indicates strong micro-scale clustering, with kiosks forming competitive clusters in high-demand locations.</p>
+<p><strong>(c) F-function with CSR</strong><br>
+The observed F(r) departs from CSR, showing shorter-than-expected empty spaces between kiosks. This highlights that kiosks are grouped rather than evenly spread, with relatively few “service deserts” in the urban core.</p>
+<p><strong>(d) Ripley’s K and L</strong><br>
+Both K and L functions exceed the Poisson baseline across wide distances, confirming clustering at multiple scales. Kiosks are not just grouped locally but form regional corridors of density, shaped by housing and transport infrastructure.</p>
+</section>
+</section>
+<section id="planning-management-implications-500-words" class="level1">
+<h1><strong>Planning &amp; management implications (≤500 words)</strong></h1>
+<p><strong>Supporting consumer convenience and accessibility:</strong><br>
+Takeaway kiosks cluster near dense housing estates and MRT/bus interchanges, which matches demand for fast delivery and walk-in customers. Urban planners can leverage this pattern by zoning more flexible ground-floor units near transport nodes and neighborhood centers to accommodate such businesses.</p>
+<p><strong>Mitigating over-concentration:</strong><br>
+Strong clustering in the eastern corridor and central city suggests potential risks of over-saturation, leading to competition-driven failures, increased waste generation, and delivery congestion. Local councils should monitor kiosk density using spatial dashboards and consider introducing caps or staged licensing in already saturated areas.</p>
+<p><strong>Expanding to underserved regions:</strong><br>
+The north and west remain relatively sparse in kiosk density. This may reflect both lower demand and fewer available retail-ready spaces. Incentives such as subsidized rental schemes, shared kitchen facilities, or delivery-only ghost kitchens can encourage kiosk growth in these underserved areas, ensuring more equitable food access and reducing delivery time inequalities.</p>
+<p><strong>Infrastructure and logistics:</strong><br>
+Dense kiosk clusters create logistical challenges for delivery drivers (traffic congestion, parking stress, and safety issues). Planners can respond by providing designated delivery bays, micro-logistics hubs, and shared cold-storage facilities near MRT stations or malls in high-density corridors.</p>
+<p><strong>Resilience and public health:</strong><br>
+Clusters of small F&amp;B outlets are more vulnerable to supply chain disruptions and health risks (e.g., hygiene lapses or foodborne illness outbreaks). Authorities can reduce systemic risks by providing cluster-wide safety inspections, shared waste management services, and hygiene training programs.</p>
+<p><strong>Data-driven monitoring:</strong><br>
+First-order and second-order analyses can be repeated quarterly to track whether kiosk clustering is deepening or dispersing. Linking business registry data with delivery platform demand patterns would further refine insights, enabling predictive planning (e.g., anticipating emerging hotspots).</p>
+<p><strong>Bottom line:</strong><br>
+Food kiosks for takeaway and delivery in Singapore show strong spatial clustering aligned with housing and transit demand. Policy should focus on supporting these high-demand clusters with logistics infrastructure and hygiene safeguards, while also encouraging dispersal to underserved areas. This dual approach will ensure both efficiency and resilience in Singapore’s urban food service ecosystem.</p>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
