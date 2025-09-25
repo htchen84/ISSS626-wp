@@ -118,10 +118,7 @@ biz_geo <- biz_geo %>%
 ```
 
 ```{r}
-biz_geo <- biz_56123 %>%
-  mutate(postal_code = str_pad(as.character(postal_code), 6, pad = "0")) %>%
-  left_join(found_clean, by = c("postal_code" = "POSTAL")) %>%
-  filter(!is.na(LONGITUDE.x), !is.na(LATITUDE.x))
+
 
 ```
 

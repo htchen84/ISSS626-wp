@@ -26,11 +26,11 @@ website:
     - text: "Take-home exercise"
       menu:
       - text: "Take-Home Exercise1a_Restaurant"
-        href: "Assignment1/Take-Home_Exercise_1.html"
-      - text: "Take-Home Exercise1b_Publishing_of_Games"
-        href: "Assignment1/Take-Home_Exercise_1.html"
-      - text: "Take-Home Exercise1c_Short_Term_Accommodation_Activities"
-        href: "Assignment1/Take-Home_Exercise_1.html"
+        href: "Assignment1/Take-Home_Exercise_1a.html"
+      - text: "Take-Home Exercise1b_Food Kiosks"
+        href: "Assignment1/Take-Home_Exercise_1b.html"
+      - text: "Take-Home Exercise1c_Real estate developers"
+        href: "Assignment1/Take-Home_Exercise_1c.html"
 
     right:
       - href: index.qmd
