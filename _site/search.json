@@ -628,5 +628,40 @@
     "title": "Hands-on_Ex06",
     "section": "12.10 Visual Interpretation of Clusters",
     "text": "12.10 Visual Interpretation of Clusters\n\n12.10.1 Visualising individual clustering variable\n\nggplot(data = shan_sf_ngeo_cluster,\n       aes(x = CLUSTER, y = RADIO_PR)) +\n  geom_boxplot()\n\n\n\n\n\n\n\n\n\n\n12.10.2 Multivariate Visualisation\n\nggparcoord(data = shan_sf_ngeo_cluster, \n           columns = c(17:21), \n           scale = \"globalminmax\",\n           alphaLines = 0.2,\n           boxplot = TRUE, \n           title = \"Multiple Parallel Coordinates Plots of ICT Variables by Cluster\") +\n  facet_grid(~ CLUSTER) + \n  theme(axis.text.x = element_text(angle = 30))\n\n\n\n\n\n\n\n\n\nshan_sf_ngeo_cluster %&gt;% \n  st_set_geometry(NULL) %&gt;%\n  group_by(CLUSTER) %&gt;%\n  summarise(mean_RADIO_PR = mean(RADIO_PR),\n            mean_TV_PR = mean(TV_PR),\n            mean_LLPHONE_PR = mean(LLPHONE_PR),\n            mean_MPHONE_PR = mean(MPHONE_PR),\n            mean_COMPUTER_PR = mean(COMPUTER_PR))\n\n# A tibble: 6 × 6\n  CLUSTER mean_RADIO_PR mean_TV_PR mean_LLPHONE_PR mean_MPHONE_PR\n  &lt;chr&gt;           &lt;dbl&gt;      &lt;dbl&gt;           &lt;dbl&gt;          &lt;dbl&gt;\n1 1               221.        521.            44.2           246.\n2 2               237.        402.            23.9           134.\n3 3               300.        611.            52.2           392.\n4 4               196.        744.            99.0           651.\n5 5               124.        224.            38.0           132.\n6 6                98.6       499.            74.5           468.\n# ℹ 1 more variable: mean_COMPUTER_PR &lt;dbl&gt;"
+  },
+  {
+    "objectID": "In-Class_Ex/In-class_Learning_week5_solution.html#getting-started",
+    "href": "In-Class_Ex/In-class_Learning_week5_solution.html#getting-started",
+    "title": "In-class_Learning_week5_solution",
+    "section": "Getting started",
+    "text": "Getting started\n\nInstalling and Loading the R Packages\n\npacman::p_load(sf, sfdep, tmap, \n               plotly, tidyverse, \n               Kendall)\n\n\n\nImporting geospatial data\n\nsetwd(\"C:/Users/HT Chen/Desktop/ISSS626/ISSS626-wp/Hands-on_Ex/Hands-on_Ex04\")\nhunan &lt;- st_read(dsn = \"data/geospatial\", \n                 layer = \"Hunan\") %&gt;% \n  st_transform(crs = 32650)\n\nReading layer `Hunan' from data source \n  `C:\\Users\\HT Chen\\Desktop\\ISSS626\\ISSS626-wp\\Hands-on_Ex\\Hands-on_Ex04\\data\\geospatial' \n  using driver `ESRI Shapefile'\nSimple feature collection with 88 features and 7 fields\nGeometry type: POLYGON\nDimension:     XY\nBounding box:  xmin: 108.7831 ymin: 24.6342 xmax: 114.2544 ymax: 30.12812\nGeodetic CRS:  WGS 84\n\n\n\n\nImporting attribute table\n\nsetwd(\"C:/Users/HT Chen/Desktop/ISSS626/ISSS626-wp/In-Class_Ex\")\nGDPPC &lt;- read_csv(\"data/aspatial/Hunan_GDPPC.csv\")"
+  },
+  {
+    "objectID": "In-Class_Ex/In-class_Learning_week5_solution.html#creating-a-time-series-cube",
+    "href": "In-Class_Ex/In-class_Learning_week5_solution.html#creating-a-time-series-cube",
+    "title": "In-class_Learning_week5_solution",
+    "section": "Creating a Time Series Cube",
+    "text": "Creating a Time Series Cube\n\nGDPPC_st &lt;- spacetime(GDPPC, hunan,\n                      .loc_col = \"County\",\n                      .time_col = \"Year\")\n\n\nis_spacetime_cube(GDPPC_st)\n\n[1] TRUE"
+  },
+  {
+    "objectID": "In-Class_Ex/In-class_Learning_week5_solution.html#computing-gi",
+    "href": "In-Class_Ex/In-class_Learning_week5_solution.html#computing-gi",
+    "title": "In-class_Learning_week5_solution",
+    "section": "Computing Gi*",
+    "text": "Computing Gi*\n\nGDPPC_nb &lt;- GDPPC_st %&gt;%\n  activate(\"geometry\") %&gt;%\n  mutate(nb = include_self(\n    st_contiguity(geometry)),\n    wt = st_inverse_distance(nb, \n                             geometry, \n                             scale = 1,\n                             alpha = 1),\n    .before = 1) %&gt;%\n  set_nbs(\"nb\") %&gt;%\n  set_wts(\"wt\")\n\n\ngi_stars &lt;- GDPPC_nb %&gt;% \n  group_by(Year) %&gt;% \n  mutate(gi_star = local_gstar_perm(\n    GDPPC, nb, wt)) %&gt;% \n  tidyr::unnest(gi_star)"
+  },
+  {
+    "objectID": "In-Class_Ex/In-class_Learning_week5_solution.html#mann-kendall-test",
+    "href": "In-Class_Ex/In-class_Learning_week5_solution.html#mann-kendall-test",
+    "title": "In-class_Learning_week5_solution",
+    "section": "Mann-Kendall Test",
+    "text": "Mann-Kendall Test\n\ncbg &lt;- gi_stars %&gt;% \n  ungroup() %&gt;% \n  filter(County == \"Changsha\") |&gt; \n  select(County, Year, gi_star)\n\n\nggplot(data = cbg, \n       aes(x = Year, \n           y = gi_star)) +\n  geom_line() +\n  theme_light()\n\n\n\n\n\n\n\n\n\nInteractive Mann-Kendall Plot\n\np &lt;- ggplot(data = cbg, \n       aes(x = Year, \n           y = gi_star)) +\n  geom_line() +\n  theme_light()\n\nggplotly(p)\n\n\n\n\n\n\ncbg %&gt;%\n  summarise(mk = list(\n    unclass(\n      Kendall::MannKendall(gi_star)))) %&gt;% \n  tidyr::unnest_wider(mk)\n\n# A tibble: 1 × 5\n    tau      sl     S     D  varS\n  &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;\n1 0.485 0.00742    66  136.  589.\n\n\n\nehsa &lt;- gi_stars %&gt;%\n  group_by(County) %&gt;%\n  summarise(mk = list(\n    unclass(\n      Kendall::MannKendall(gi_star)))) %&gt;%\n  tidyr::unnest_wider(mk)\nhead(ehsa)\n\n# A tibble: 6 × 6\n  County        tau        sl     S     D  varS\n  &lt;chr&gt;       &lt;dbl&gt;     &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;\n1 Anhua      0.191  0.303        26  136.  589.\n2 Anren     -0.294  0.108       -40  136.  589.\n3 Anxiang    0      1             0  136.  589.\n4 Baojing   -0.691  0.000128    -94  136.  589.\n5 Chaling   -0.0882 0.650       -12  136.  589.\n6 Changning -0.750  0.0000318  -102  136.  589.\n\n\n\nemerging &lt;- ehsa %&gt;% \n  arrange(sl, abs(tau)) %&gt;% \n  slice(1:10)\nhead(emerging)\n\n# A tibble: 6 × 6\n  County        tau         sl     S     D  varS\n  &lt;chr&gt;       &lt;dbl&gt;      &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;\n1 Shuangfeng  0.868 0.00000143   118  136.  589.\n2 Xiangtan    0.868 0.00000143   118  136.  589.\n3 Xiangxiang  0.868 0.00000143   118  136.  589.\n4 Chengbu    -0.824 0.00000482  -112  136.  589.\n5 Dongan     -0.824 0.00000482  -112  136.  589.\n6 Wugang     -0.809 0.00000712  -110  136.  589."
+  },
+  {
+    "objectID": "In-Class_Ex/In-class_Learning_week5_solution.html#performing-emerging-hotspot-analysis",
+    "href": "In-Class_Ex/In-class_Learning_week5_solution.html#performing-emerging-hotspot-analysis",
+    "title": "In-class_Learning_week5_solution",
+    "section": "Performing Emerging Hotspot Analysis",
+    "text": "Performing Emerging Hotspot Analysis\n\nehsa &lt;- emerging_hotspot_analysis(\n  x = GDPPC_st, \n  .var = \"GDPPC\", \n  k = 1, \n  nsim = 99\n)\n\n\nVisualising the distribution of EHSA classes\n\nggplot(data = ehsa,\n       aes(x = classification)) +\n  geom_bar()\n\n\n\n\n\n\n\n\n\n\nVisualising EHSA\n\nhunan_ehsa &lt;- hunan %&gt;%\n  left_join(ehsa,\n            by = join_by(County == location))\n\n\nehsa_sig &lt;- hunan_ehsa  %&gt;%\n  filter(p_value &lt; 0.05)\ntmap_mode(\"plot\")\ntm_shape(hunan_ehsa) +\n  tm_polygons() +\n  tm_borders(fill_alpha = 0.5) +\ntm_shape(ehsa_sig) +\n  tm_fill(\"classification\") + \n  tm_borders(fill_alpha = 0.4)"
   }
 ]
