@@ -1,0 +1,220 @@
+---
+title: "In-class_Ex06"
+author: "HTC"
+date-modified: "last-modified"
+format:
+  html:
+    toc-depth: 4
+    toc-expand: true
+execute: 
+  eval: true
+  echo: true
+  warning: false
+  freeze: true
+---
+
+```{r}
+pacman::p_load(sf, sfdep, tmap, 
+               plotly, tidyverse, 
+               Kendall,knitr)
+```
+
+```{r}
+setwd("C:/Users/HT Chen/Desktop/ISSS626/ISSS626-wp/Hands-on_Ex/Hands-on_Ex01.1")
+mpsz <- st_read("data/geospatial/MasterPlan2019SubzoneBoundaryNoSeaKML.kml") %>% 
+  st_transform(crs = 3414)
+```
+
+```{r}
+setwd("C:/Users/HT Chen/Desktop/ISSS626/ISSS626-wp/Assignment_2")
+BusStop = st_read(dsn = "data/LTA_Datamall",
+                  layer = "BusStop") %>% 
+  st_transform(crs = 3414)
+```
+
+```{r}
+setwd("C:/Users/HT Chen/Desktop/ISSS626/ISSS626-wp/Assignment_2")
+odbus <- read_csv("data/origin_destination_bus_202508.csv")
+```
+
+```{r}
+BusStop_in_SG <- st_join(
+  BusStop, mpsz,
+  join = st_within,
+  left=FALSE
+)
+```
+
+```{r}
+tm_shape(mpsz) +
+  tm_polygons() +
+tm_shape(BusStop_in_SG) +
+  tm_dots()
+```
+
+```{r}
+#st crs is reference
+#x bustop layer and y mpsz layer not the same
+#coordinate conversion before join
+```
+
+```{r}
+st_crs(mpsz)
+```
+
+```{r}
+st_crs(BusStop)
+```
+
+```{r}
+
+```
+
+```{r}
+hexagon <- st_make_grid(mpsz,
+                        cellsize = 700,
+                        what = "polygon",
+                        square = FALSE) %>%
+  st_sf()
+```
+
+```{r}
+hexagon <- hexagon %>%
+  select(, geometry)
+
+hexagon$HEX_ID <- sprintf(
+  "H%04d", seq_len(nrow(hexagon))) %>%
+  as.factor()
+
+kable(head(hexagon))
+```
+
+```{r}
+colnames(hexagon)
+```
+
+```{r}
+hexagon$n_collisions =
+  lengths(st_intersects(
+    hexagon, BusStop_in_SG))
+
+hexagon <- filter(hexagon, n_collisions >0)
+  
+```
+
+```{r}
+trips <- odbus %>%
+  select(c(ORIGIN_PT_CODE, DAY_TYPE, TIME_PER_HOUR, TOTAL_TRIPS)) %>%
+  rename(BUS_STOP_N = ORIGIN_PT_CODE) %>%
+  rename(HOUR_OF_DAY = TIME_PER_HOUR) %>%
+  rename(TRIPS = TOTAL_TRIPS)
+trips$BUS_STOP_N <- as.factor(trips$BUS_STOP_N)
+kable(head(trips))
+```
+
+```{r}
+bs_hex <- st_intersection(
+  BusStop, hexagon) %>%
+  st_drop_geometry() %>%
+  select(c(BUS_STOP_N, HEX_ID))
+kable(bs_hex)
+```
+
+```{r}
+trips <- inner_join(trips, bs_hex)
+kable(head(trips))
+```
+
+```{r}
+
+```
+
+```{r}
+#grid or hexagon
+#hexagon data 375m ** under task
+```
+
+```{r}
+#hexagon with busStop 1, no busstop 0
+#104 hexagon left
+```
+
+```{r}
+#hexagon <- st_make_grid(mpsz,
+#                        cellsize = 700,
+#                        what = "polygon",
+#                        square = FALSE) %>% 
+#  st_sf()
+```
+
+```{r}
+#1 bus at hexagon
+#number of trip generated at different time period
+#hexagon required a id to do temporal
+```
+
+```{r}
+#factor- ordinal scale
+#
+#hexagon <- 
+```
+
+```{r}
+#total underscore
+```
+
+```{r}
+#clean trip data
+#trip
+```
+
+```{r}
+#aggregate into hexagon layer
+#transform hex_id to bus_stop_n
+#trip does not know the hex_id
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+#bs_hex <- st_intersection(
+#  BusStop,
+#)
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+#inner_join(trips, bs_hex)
+#kable(head(trips))
+```
+
+```{r}
+
+```
+
+```{r}
+#weekend, weekdaay time interval
+#time space cube first before analysis sfdep for emerging analysis (do this first)
+#local cross section study and spatial temporal study(same dataset )
+```
