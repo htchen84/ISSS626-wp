@@ -129,7 +129,7 @@ biz_sf_wgs <- st_as_sf(biz_geo,
 ```
 
 ```{r}
-
+glimpse(biz_geo)
 
 ```
 

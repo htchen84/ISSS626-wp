@@ -126,7 +126,12 @@ kable(head(trips))
 ```
 
 ```{r}
-
+trips <- trips %>%
+  group_by(
+    HEX_ID,
+    DAY_TYPE,
+    HOUR_OF_DAY) %>%
+  summarise(TRIPS = sum(TRIPS))
 ```
 
 ```{r}
