@@ -1,0 +1,558 @@
+---
+title: "Take-Home_Excercise_2"
+author: "HTC"
+date-modified: "last-modified"
+format:
+  html:
+    toc-depth: 4
+    toc-expand: true
+execute: 
+  eval: true
+  echo: true
+  warning: false
+  freeze: true
+---
+
+## **2.1 Setting the Scene**
+
+Urban mobility refers to the movement of people and goods within and between cities, spanning all modes of transport such as walking, cycling, public transit, private vehicles, and freight. Driven by factors like population growth and climate change, urban mobility planning aims to create smart, efficient, and sustainable networks that reduce congestion and emissions while enhancing quality of life and economic vitality. Key developments include the rise of shared mobility services, autonomous vehicles, and integrated smart systems that prioritize user experience, safety, and inclusivity in urban environments.
+
+As city-wide urban infrastructures such as buses, taxis, mass rapid transit, public utilities and roads become digital, the datasets obtained can be used as a framework for tracking movement patterns through space and time. This is especially true with the widespread deployment of pervasive computing technologies such as smart cards, GPS, and RFID in vehicles. For example, routes and ridership data were collected with the use of smart cards and Global Positioning System (GPS) devices available on the public buses. These large-scale movement datasets often contain patterns that reveal important characteristics of urban mobility. Identifying and analyzing such patterns can deepen our understanding of human mobility, supporting better urban management. For both public and private transport providers, these insights enable more informed decisions and improved service planning.
+
+In real-world practices, the use of these massive locational aware data to gain better urban mobility patterns and trends, however, tend to be confined to simple tracking and mapping with GIS applications. This is mainly because conventional GIS tools lack robust geospatial statistics capabilities for analyzing and modeling spatial and spatio-temporal data.
+
+## **2.2 Objectives**
+
+Local Measures of Spatial Autocorrelation (LMSA) are geospatial statisticals for identifying specific locations within a map that show significant spatial clustering of similar or dissimilar values. Unlike global measures that summarize the entire map, LMSA tests each location individually to determine whether its value, in relation to its neighbors, is more clustered or dispersed than expected by chance. This helps to find hotspots (high values clustered together), coldspots (low values clustered together), and outliers (high values surrounded by low values, or vice versa) by calculating a value for each individual location. The popular LMSA statistics include Local Moran’s I, Local Geary’s C, and the Getis-Ord Gi\*.
+
+Emerging Hot Spot Analysis (EHSA) is a spatio-temporal technique that complements LMSA when working with spatio-temporal data. It uses a space-time cube to identify and categorize clusters of high or low values (hot and cold spots) over time. By combining local Gi\* statistics to find clusters with the Mann-Kendall test to detect trends, EHSA categorizes locations into trends such as “new,” “intensifying,” “diminishing,” or “sporadic” hot and cold spots, revealing how spatial patterns are evolving.
+
+Both LMSA and EHSA hold tremendous potential to address complex urban mobility problems facing society. Using *Passenger Volume by Origin Destination Bus Stops* provided by [LTA DataMall](https://datamall.lta.gov.sg/content/datamall/en.html), in this exercise, you will explore two important geospatial statistical approaches for analysing urban mobility:
+
+### **2.21 Local Measures of Spatial Autocorrelation (LMSA)**
+
+-   Learn how to apply Local Moran’s I, Local Geary’s C, and the Getis-Ord Gi\* statistic.
+
+-   Understand how LMSA differs from global measures by testing each location individually, revealing where values cluster together or stand apart.
+
+-   Identify hotspots (areas of high values clustered together), cold spots (areas of low values clustered together), and spatial outliers (unusual locations where high values are surrounded by low values, or vice versa).
+
+### **2.22 Emerging Hot Spot Analysis (EHSA)**
+
+-   Learn how EHSA complements LMSA by adding a temporal dimension.
+
+-   Use the space-time cube framework to track how hot and cold spots evolve over time.
+
+-   Apply EHSA categories (e.g., “new,” “intensifying,” “diminishing,” “sporadic”) to understand whether travel patterns are strengthening, weakening, or shifting.
+
+In conclusion, the objectives of this hands-on exercises are:
+
+-   To discover how bus mobility patterns differ across neighborhoods, providing deeper insights than global summary measures.
+
+-   To detect emerging patterns in urban mobility, helping planners anticipate commuting demands and design more responsive bus services and policies.
+
+## **2.3The Task**
+
+The specific tasks of this take-home exercise are as follows:
+
+### **2.31 Geospatial Data Science**
+
+-   Derive an analytical hexagon data of 375m (this distance is the perpendicular distance between the centre of the hexagon and its edges) to represent the [traffic analysis zone (TAZ)](https://tmg.utoronto.ca/files/Reports/Traffic-Zone-Guidance_March-2021_Final.pdf).
+
+-   With reference to the time intervals provided in the table below, compute the passenger trips generated by origin at the hexagon level.
+
+    | Peak hour period       | Bus tap on time |
+    |------------------------|-----------------|
+    | Weekday morning peak   | 6am to 9am      |
+    | Weekday afternoon peak | 5pm to 8pm      |
+    | Weekend/holiday        | 11am to 8pm     |
+
+-   Display the geographical distribution of the passenger trips by using appropriate geovisualisation methods,
+
+-   Describe the spatial patterns revealed by the geovisualisation (not more than 200 words per visual).
+
+### **2.32 Local Measures of Spatial Association (LMSA) Analysis**
+
+-   Compute LMSA statistic of the passengers trips generate by origin at hexagon level.
+
+-   Display the LMSA maps of the passengers trips generate by origin at hexagon level. The maps should only display the significant (i.e. p-value \< 0.05)
+
+-   With reference to the analysis results, draw statistical conclusions (not more than 200 words per visual).
+
+### **2.33 Emerging Hot Spot Analysis(EHSA)**
+
+With reference to the passenger trips by origin at the hexagon level for the three time intervals given above:
+
+-   Perform Mann-Kendall Test by using the spatio-temporal local Gi\* values,
+
+-   Prepared EHSA maps of the Gi\* values of the passenger trips by origin at the hexagon level. The maps should only display the significant (i.e. p-value \< 0.05).
+
+-   With reference to the EHSA maps and data visualisation prepared, describe the spatial patterns reveled. (not more than 250 words per cluster).
+
+## **2.4 The Data**
+
+### **2.41 Apstial data**
+
+For the purpose of this take-home exercise, the latest month *Passenger Volume by Origin Destination Bus Stops* downloaded from [LTA DataMall](https://datamall.lta.gov.sg/content/datamall/en.html) will be used.
+
+### **2.42 Geospatial data**
+
+Two geospatial data will be used in this study, they are:
+
+-   *Bus Stop Location* from LTA DataMall. It provides information about all the bus stops currently being serviced by buses, including the bus stop code (identifier) and location coordinates.
+
+-   *Master Plan 2019 Subzone Boundary (No Sea)* from [Singapore’s open data portal](https://isss626-ay2025-26aug.netlify.app/data.gov.sg).
+
+# **2.5 Get Started**
+
+## **2.5.1 Preparation and TMAP plot**
+
+```{r}
+pacman::p_load(sf, sfdep, tmap, 
+               plotly, tidyverse, 
+               Kendall,knitr)
+```
+
+```{r}
+setwd("C:/Users/HT Chen/Desktop/ISSS626/ISSS626-wp/Hands-on_Ex/Hands-on_Ex01.1")
+mpsz <- st_read("data/geospatial/MasterPlan2019SubzoneBoundaryNoSeaKML.kml") %>% 
+  st_transform(crs = 3414)
+```
+
+```{r}
+setwd("C:/Users/HT Chen/Desktop/ISSS626/ISSS626-wp/Assignment_2")
+BusStop = st_read(dsn = "data/LTA_Datamall",
+                  layer = "BusStop") %>% 
+  st_transform(crs = 3414)
+```
+
+```{r}
+setwd("C:/Users/HT Chen/Desktop/ISSS626/ISSS626-wp/Assignment_2")
+odbus <- read_csv("data/origin_destination_bus_202508.csv")
+```
+
+```{r}
+BusStop_in_SG <- st_join(
+  BusStop, mpsz,
+  join = st_within,
+  left=FALSE
+)
+```
+
+```{r}
+tm_shape(mpsz) +
+  tm_polygons() +
+tm_shape(BusStop_in_SG) +
+  tm_dots()
+```
+
+```{r}
+#st crs is reference
+#x bustop layer and y mpsz layer not the same
+#coordinate conversion before join
+```
+
+```{r}
+st_crs(mpsz)
+```
+
+```{r}
+st_crs(BusStop)
+```
+
+```{r}
+
+```
+
+```{r}
+hexagon <- st_make_grid(mpsz,
+                        cellsize = 700,
+                        what = "polygon",
+                        square = FALSE) %>%
+  st_sf()
+```
+
+```{r}
+hexagon <- hexagon %>%
+  select(, geometry)
+
+hexagon$HEX_ID <- sprintf(
+  "H%04d", seq_len(nrow(hexagon))) %>%
+  as.factor()
+
+kable(head(hexagon))
+```
+
+```{r}
+colnames(hexagon)
+```
+
+```{r}
+hexagon$n_collisions =
+  lengths(st_intersects(
+    hexagon, BusStop_in_SG))
+
+hexagon <- filter(hexagon, n_collisions >0)
+  
+```
+
+```{r}
+trips <- odbus %>%
+  select(c(ORIGIN_PT_CODE, DAY_TYPE, TIME_PER_HOUR, TOTAL_TRIPS)) %>%
+  rename(BUS_STOP_N = ORIGIN_PT_CODE) %>%
+  rename(HOUR_OF_DAY = TIME_PER_HOUR) %>%
+  rename(TRIPS = TOTAL_TRIPS)
+trips$BUS_STOP_N <- as.factor(trips$BUS_STOP_N)
+kable(head(trips))
+```
+
+```{r}
+bs_hex <- st_intersection(
+  BusStop, hexagon) %>%
+  st_drop_geometry() %>%
+  select(c(BUS_STOP_N, HEX_ID))
+kable(bs_hex)
+```
+
+```{r}
+trips <- inner_join(trips, bs_hex)
+kable(head(trips))
+```
+
+```{r}
+trips <- trips %>%
+  group_by(
+    HEX_ID,
+    DAY_TYPE,
+    HOUR_OF_DAY) %>%
+  summarise(TRIPS = sum(TRIPS))
+```
+
+## **2.5.2 Derive an analytical hexagon data of 375m**
+
+```{r}
+
+```
+
+```{r}
+sg_boundary <- BusStop %>%
+  st_union() %>%
+  st_convex_hull() %>%
+  st_sf()
+```
+
+```{r}
+hexagon_375 <- st_make_grid(
+  sg_boundary,
+  cellsize = 375,          # perpendicular distance between center and edge
+  what = "polygons",
+  square = FALSE           # ensures hexagonal tessellation
+) %>%
+  st_sf()    
+```
+
+```{r}
+hexagon_375 <- hexagon_375 %>%
+  mutate(HEX_ID = sprintf("H%04d", row_number()))
+```
+
+```{r}
+hexagon_375 <- st_intersection(hexagon_375, sg_boundary)
+```
+
+```{r}
+tmap_mode("plot")
+tm_shape(hexagon_375) + 
+  tm_polygons(fill_alpha = 0.3, border.col = "grey") +
+tm_shape(BusStop) + 
+  tm_dots(size = 0.03, col = "blue") +
+  tm_title("375m Hexagonal TAZ Zones over Singapore")
+```
+
+```{r}
+
+odbus <- odbus %>%
+  mutate(
+    # Convert time like "06:00:00" to hour numeric
+    HOUR = hour(hms(TIME_PER_HOUR)),
+
+    # Classify peak periods based on time + day type
+    PERIOD = case_when(
+      DAY_TYPE == "WEEKDAY" & HOUR >= 6 & HOUR < 9  ~ "Weekday AM Peak",
+      DAY_TYPE == "WEEKDAY" & HOUR >= 17 & HOUR < 20 ~ "Weekday PM Peak",
+      DAY_TYPE %in% c("WEEKENDS", "HOLIDAY") & HOUR >= 11 & HOUR < 20 ~ "Weekend/Holiday",
+      TRUE ~ "Off-Peak"
+    )
+  )
+
+# Check the result
+table(odbus$PERIOD)
+head(odbus)
+
+
+```
+
+```{r}
+hexagon <- st_make_grid(
+  mpsz,
+  cellsize = 375 * 2 / sqrt(3),   # adjust so distance from center to edge ≈ 375 m
+  what = "polygons",
+  square = FALSE
+) %>%
+  st_sf() %>%
+  st_intersection(mpsz) %>%
+  mutate(HEX_ID = sprintf("H%04d", row_number()))
+
+```
+
+```{r}
+
+```
+
+```{r}
+# Join OD rows to bus-stop geometry by origin code -> becomes sf
+od_geo <- left_join(
+  odbus,
+  BusStop_in_SG,                      # has BUS_STOP_CODE + geometry
+  by = c("ORIGIN_PT_CODE" = "BUS_STOP_CODE")
+) %>%
+  st_as_sf() %>%
+  filter(!st_is_empty(geometry))      # drop rows with missing joins, just in case
+
+```
+
+```{r}
+trips_hex <- st_join(od_geo, hexagon, join = st_within) %>%
+  st_drop_geometry() %>%
+  group_by(HEX_ID, PERIOD) %>%
+  summarise(TOTAL_TRIPS = sum(TOTAL_TRIPS, na.rm = TRUE), .groups = "drop")
+
+# Merge counts back to geometry
+hex_trip <- left_join(hexagon, trips_hex, by = "HEX_ID") %>%
+  replace_na(list(TOTAL_TRIPS = 0))
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+# With reference to the time intervals dataframe
+
+## compute the passenger trips generated by origin at the hexagon level
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```         
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+#grid or hexagon
+#hexagon data 375m ** under task
+```
+
+```{r}
+#hexagon with busStop 1, no busstop 0
+#104 hexagon left
+```
+
+```{r}
+#hexagon <- st_make_grid(mpsz,
+#                        cellsize = 700,
+#                        what = "polygon",
+#                        square = FALSE) %>% 
+#  st_sf()
+```
+
+```{r}
+#1 bus at hexagon
+#number of trip generated at different time period
+#hexagon required a id to do temporal
+```
+
+```{r}
+#factor- ordinal scale
+#
+#hexagon <- 
+```
+
+```{r}
+#total underscore
+```
+
+```{r}
+#clean trip data
+#trip
+```
+
+```{r}
+#aggregate into hexagon layer
+#transform hex_id to bus_stop_n
+#trip does not know the hex_id
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+#bs_hex <- st_intersection(
+#  BusStop,
+#)
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+#inner_join(trips, bs_hex)
+#kable(head(trips))
+```
+
+```{r}
+
+```
+
+```{r}
+#weekend, weekdaay time interval
+#time space cube first before analysis sfdep for emerging analysis (do this first)
+#local cross section study and spatial temporal study(same dataset )
+```
