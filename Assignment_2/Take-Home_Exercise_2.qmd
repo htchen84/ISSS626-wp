@@ -985,9 +985,20 @@ tmap_arrange(Gi_star_map, HCSA_map, asp=1, ncol=2)
 ```
 
 ```{r}
+missing_hex <- mpsz_trips_clean %>%
+  st_drop_geometry() %>%
+  group_by(HEX_ID) %>%
+  summarise(n_periods = n_distinct(bus_tap_on_time)) %>%
+  filter(n_periods < length(levels(mpsz_trips_clean$bus_tap_on_time)))
+
+missing_hex
+
 ```
 
 ```{r}
+mpsz_trips_clean_filtered <- mpsz_trips_clean %>%
+  filter(!HEX_ID %in% missing_hex$HEX_ID)
+
 ```
 
 The dataset doesn’t have a record for every combination of\
@@ -997,7 +1008,7 @@ For a valid space–time cube, each hexagon must appear once for each time slice
 
 ```{r}
 # check which HEX_ID are missing time periods
-mpsz_trips %>%
+mpsz_trips_clean %>%
   group_by(HEX_ID) %>%
   summarise(unique_periods = n_distinct(bus_tap_on_time)) %>%
   filter(unique_periods < 3)
@@ -1010,7 +1021,7 @@ mpsz_trips %>%
 
 ```{r}
 #c
-mpsz_trips_complete <- mpsz_trips %>%
+mpsz_trips_complete <- mpsz_trips_clean_filtered %>%
   tidyr::expand(HEX_ID, bus_tap_on_time) %>%     # all HEX–time combinations
   left_join(mpsz_trips_clean, by = c("HEX_ID", "bus_tap_on_time")) %>%
   mutate(TOTAL_TRIPS = replace_na(TOTAL_TRIPS, 0)) %>%
@@ -1025,10 +1036,6 @@ class(mpsz_trips_complete)
 ```
 
 ```{r}
-mpsz_trips_complete <- mpsz_trips_complete %>%
-  st_make_valid() %>%
-  st_buffer(0)
-
 ```
 
 ```{r}
@@ -1255,15 +1262,15 @@ ehsa <- emerging_hotspot_analysis(
 ```
 
 ```{r}
-ehsa_sig <- ehsa  %>%
-  filter(p_value < 0.05)
-tmap_mode("plot")
-tm_shape(hunan_ehsa) +
-  tm_polygons() +
-  tm_borders(fill_alpha = 0.5) +
-tm_shape(ehsa_sig) +
-  tm_fill("classification") + 
-  tm_borders(fill_alpha = 0.4)
+#ehsa_sig <- ehsa  %>%
+#  filter(p_value < 0.05)
+#tmap_mode("plot")
+#tm_shape(hunan_ehsa) +
+#  tm_polygons() +
+#  tm_borders(fill_alpha = 0.5) +
+#tm_shape(ehsa_sig) +
+#  tm_fill("classification") + 
+#  tm_borders(fill_alpha = 0.4)
 ```
 
 ![](images/clipboard-1934353918.png)

@@ -54,6 +54,10 @@ wm_q <- hunan_GDPPC %>%
 ```
 
 ```{r}
+class(wm_q)
+```
+
+```{r}
 global_moran_perm(wm_q$GDPPC,
                   wm_q$nb,
                   wm_q$wt,

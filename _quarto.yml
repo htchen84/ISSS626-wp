@@ -37,6 +37,8 @@ website:
         href: "In-class_Ex/In-class_Learning_week6.html"
       - text: "In-class_Learning_week5_solution"
         href: "In-class_Ex/In-class_Learning_week5_solution.html"
+      - text: "In-class_Learning_week7"
+        href: "In-class_Ex/In-class_Learning_week7.html"
       - text: "In-class Exercise03a"
         href: "In-Class_Ex/In-class_Ex03a.html"
     - text: "Take-home exercise"
@@ -47,6 +49,8 @@ website:
         href: "Assignment1/Take-Home_Exercise_1b.html"
       - text: "Take-Home Exercise1c_Real estate developers"
         href: "Assignment1/Take-Home_Exercise_1c.html"
+      - text: "Take-Home2"
+        href: "Assignment_2/Take-Home_Exercise_2.html"
 
     right:
       - href: index.qmd
