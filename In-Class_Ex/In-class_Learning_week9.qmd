@@ -1,5 +1,5 @@
 ---
-title: "Hands-on_Ex09"
+title: "In-class_Learning_week09"
 author: "HTC"
 editor: visual
 date-modified: "last-modified"
@@ -160,67 +160,211 @@ Now, we ready to compute Hansen’s accessibility by using *ac()* of [**SpatialA
 The code chunk below calculates Hansen’s accessibility using *ac()* of **SpatialAcc** and *data.frame()* is used to save the output in a data frame called `acc_Handsen`.
 
 ```{r}
-#acc_Hansen_0.5 <- data.frame(ac(hexagons$demand,
-#                            eldercare$capacity,
-#                            distmat_km, 
-#                            #d0 = 50,
-#                            power = 0.5, 
-#                            family = "Hansen"))
+acc_Hansen_0.5 <- data.frame(SpatialAcc::ac(hexagons$demand,
+                            eldercare$capacity,
+                            distmat_km, 
+                            #d0 = 50,
+                            power = 0.5, 
+                            family = "Hansen"))
 ```
 
 ```{r}
-#acc_Hansen_1 <- data.frame(ac(hexagons$demand,
-#                            eldercare$capacity,
-#                            distmat_km, 
-#                            d0 = 50,
-#                            power = 1, 
-#                            family = "Hansen"))
+acc_Hansen_1 <- data.frame(SpatialAcc::ac(hexagons$demand,
+                            eldercare$capacity,
+                            distmat_km, 
+                            d0 = 50,
+                            power = 1, 
+                            family = "Hansen"))
 ```
 
 ```{r}
-#acc_Hansen_1.5 <- data.frame(ac(hexagons$demand,
-#                            eldercare$capacity,
-#                            distmat_km, 
-#                            d0 = 50,
-#                            power = 1.5, 
-#                            family = "Hansen"))
+acc_Hansen_1.5 <- data.frame(SpatialAcc::ac(hexagons$demand,
+                            eldercare$capacity,
+                            distmat_km, 
+                            d0 = 50,
+                            power = 1.5, 
+                            family = "Hansen"))
 ```
 
 ```{r}
-#acc_Hansen_2 <- data.frame(ac(hexagons$demand,
- #                           eldercare$capacity,
-#                            distmat_km, 
-#                            d0 = 50,
-#                            power = 2, 
-#                            family = "Hansen"))
+acc_Hansen_2 <- data.frame(SpatialAcc::ac(hexagons$demand,
+                            eldercare$capacity,
+                            distmat_km, 
+                            d0 = 50,
+                            power = 2, 
+                            family = "Hansen"))
 ```
 
 ```{r}
-#acc_Hansen2.5 <- data.frame(ac(hexagons$demand,
-#                            eldercare$capacity,
-#                            distmat_km, 
-#                            d0 = 50,
-#                            power = 2.5, 
-#                            family = "Hansen"))
+acc_Hansen_2.5 <- data.frame(SpatialAcc::ac(hexagons$demand,
+                            eldercare$capacity,
+                            distmat_km, 
+                            d0 = 50,
+                            power = 2.5, 
+                            family = "Hansen"))
 ```
 
 ```{r}
-#tm_shape(hexagon_SAM,
-#         bbox = mapex) + 
-#  tm_polygons(fill = "accSAM", 
-#              fill.scale = tm_scale_intervals(
-#                style = "quantile",
-#                n = 10,
-#                values = "brewer.blues")) +
-#tm_shape(eldercare) +
-#  tm_dots(size = 0.3,
-#          fill = "red",
-#          col = "black") +
-#  tm_title("Accessibility to eldercare: SAM method") +
-#  tm_layout(frame = TRUE) +
-#  tm_compass(type="8star", size = 2) +
-#  tm_scalebar() +
-#  tm_grid(alpha = 0.2)
+mapex <- st_bbox(hexagons)
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+hexagons$accHansen_0.5 <- acc_Hansen_0.5$Hansen
+hexagons$accHansen_1   <- acc_Hansen_1$Hansen
+hexagons$accHansen_1.5 <- acc_Hansen_1.5$Hansen
+hexagons$accHansen_2   <- acc_Hansen_2$Hansen
+hexagons$accHansen_2.5 <- acc_Hansen_2.5$Hansen
+
+names(hexagons)
+```
+
+```{r}
+colnames(acc_Hansen_0.5) <- "acc_Hansen_0.5"
+acc_SAM <- as_tibble(acc_Hansen_0.5)
+hexagon_0.5 <- bind_cols(hexagons, acc_Hansen_0.5)
+```
+
+```{r}
+colnames(acc_Hansen_1) <- "acc_Hansen_1"
+acc_SAM <- as_tibble(acc_Hansen_1)
+hexagon_1 <- bind_cols(hexagons, acc_Hansen_1)
+```
+
+```{r}
+colnames(acc_Hansen_1.5) <- "acc_Hansen_1.5"
+acc_SAM <- as_tibble(acc_Hansen_1.5)
+hexagon_1.5 <- bind_cols(hexagons, acc_Hansen_1.5)
+```
+
+```{r}
+colnames(acc_Hansen_2) <- "acc_Hansen_2"
+acc_SAM <- as_tibble(acc_Hansen_2)
+hexagon_2 <- bind_cols(hexagons, acc_Hansen_2)
+```
+
+```{r}
+colnames(acc_Hansen_2.5) <- "acc_Hansen_2.5"
+acc_SAM <- as_tibble(acc_Hansen_2.5)
+hexagon_2.5 <- bind_cols(hexagons, acc_Hansen_2.5)
+```
+
+```{r}
+tm_shape(hexagon_0.5,
+         bbox = mapex) + 
+  tm_polygons(fill = "acc_Hansen_0.5", 
+              fill.scale = tm_scale_intervals(
+                style = "quantile",
+                n = 10,
+                values = "brewer.blues")) +
+tm_shape(eldercare) +
+  tm_dots(size = 0.3,
+          fill = "red",
+          col = "black") +
+  tm_title("Accessibility to eldercare: SAM method") +
+  tm_layout(frame = TRUE) +
+  tm_compass(type="8star", size = 2) +
+  tm_scalebar() +
+  tm_grid(alpha = 0.2)
+```
+
+```{r}
+tm_shape(hexagon_1,
+         bbox = mapex) + 
+  tm_polygons(fill = "acc_Hansen_1", 
+              fill.scale = tm_scale_intervals(
+                style = "quantile",
+                n = 10,
+                values = "brewer.blues")) +
+tm_shape(eldercare) +
+  tm_dots(size = 0.3,
+          fill = "red",
+          col = "black") +
+  tm_title("Accessibility to eldercare: SAM method") +
+  tm_layout(frame = TRUE) +
+  tm_compass(type="8star", size = 2) +
+  tm_scalebar() +
+  tm_grid(alpha = 0.2)
+```
+
+```{r}
+tm_shape(hexagon_1.5,
+         bbox = mapex) + 
+  tm_polygons(fill = "acc_Hansen_1.5", 
+              fill.scale = tm_scale_intervals(
+                style = "quantile",
+                n = 10,
+                values = "brewer.blues")) +
+tm_shape(eldercare) +
+  tm_dots(size = 0.3,
+          fill = "red",
+          col = "black") +
+  tm_title("Accessibility to eldercare: SAM method") +
+  tm_layout(frame = TRUE) +
+  tm_compass(type="8star", size = 2) +
+  tm_scalebar() +
+  tm_grid(alpha = 0.2)
+```
+
+```{r}
+tm_shape(hexagon_2,
+         bbox = mapex) + 
+  tm_polygons(fill = "acc_Hansen_2", 
+              fill.scale = tm_scale_intervals(
+                style = "quantile",
+                n = 10,
+                values = "brewer.blues")) +
+tm_shape(eldercare) +
+  tm_dots(size = 0.3,
+          fill = "red",
+          col = "black") +
+  tm_title("Accessibility to eldercare: SAM method") +
+  tm_layout(frame = TRUE) +
+  tm_compass(type="8star", size = 2) +
+  tm_scalebar() +
+  tm_grid(alpha = 0.2)
+```
+
+```{r}
+tm_shape(hexagon_2.5,
+         bbox = mapex) + 
+  tm_polygons(fill = "acc_Hansen_2.5", 
+              fill.scale = tm_scale_intervals(
+                style = "quantile",
+                n = 10,
+                values = "brewer.blues")) +
+tm_shape(eldercare) +
+  tm_dots(size = 0.3,
+          fill = "red",
+          col = "black") +
+  tm_title("Accessibility to eldercare: SAM method") +
+  tm_layout(frame = TRUE) +
+  tm_compass(type="8star", size = 2) +
+  tm_scalebar() +
+  tm_grid(alpha = 0.2)
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
 ```
 
 ```{r}
@@ -305,7 +449,7 @@ The default field name is very messy, we will rename it to `accHansen` by usin
 
 ```
 
-```{}
+```         
 ```
 
 ```{r}

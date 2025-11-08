@@ -210,6 +210,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  <span class="dropdown-text">In-class_Learning_week8</span></a>
   </li>  
         <li>
+    <a class="dropdown-item" href="../../In-class_Ex/In-class_Learning_week9.html">
+ <span class="dropdown-text">In-class_Learning_week9</span></a>
+  </li>  
+        <li>
     <a class="dropdown-item" href="../../In-Class_Ex/In-class_Ex03a.html">
  <span class="dropdown-text">In-class Exercise03a</span></a>
   </li>  
@@ -328,7 +332,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Modified</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">November 6, 2025</p>
+      <p class="date-modified">November 8, 2025</p>
     </div>
   </div>
     
@@ -533,7 +537,7 @@ PROJCRS["SVY21 / Singapore TM",
 <p>Now, we ready to compute Hansen’s accessibility by using <em>ac()</em> of <a href="https://cran.r-project.org/web/packages/SpatialAcc/index.html"><strong>SpatialAcc</strong></a> package. Before getting started, you are encourage to read the <a href="https://cran.r-project.org/web/packages/SpatialAcc/SpatialAcc.pdf">arguments</a> of the function at least once in order to ensure that the required inputs are available.</p>
 <p>The code chunk below calculates Hansen’s accessibility using <em>ac()</em> of <strong>SpatialAcc</strong> and <em>data.frame()</em> is used to save the output in a data frame called <code>acc_Handsen</code>.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>acc_Hansen <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="fu">ac</span>(hexagons<span class="sc">$</span>demand,</span>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>acc_Hansen <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(SpatialAcc<span class="sc">::</span><span class="fu">ac</span>(hexagons<span class="sc">$</span>demand,</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>                            eldercare<span class="sc">$</span>capacity,</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>                            distmat_km, </span>
 <span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>                            <span class="co">#d0 = 50,</span></span>
@@ -552,7 +556,7 @@ PROJCRS["SVY21 / Singapore TM",
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>hexagon_Hansen <span class="ot">&lt;-</span> <span class="fu">bind_cols</span>(hexagons, acc_Hansen)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>acc_Hansen <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="fu">ac</span>(hexagons<span class="sc">$</span>demand,</span>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>acc_Hansen <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(SpatialAcc<span class="sc">::</span><span class="fu">ac</span>(hexagons<span class="sc">$</span>demand,</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>                            eldercare<span class="sc">$</span>capacity,</span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>                            distmat_km, </span>
 <span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>                            <span class="co">#d0 = 50,</span></span>
@@ -635,7 +639,7 @@ PROJCRS["SVY21 / Singapore TM",
 <p>In this section, you are going to repeat most of the steps you had learned in previous section to perform the analysis. However, some of the codes will be combined into one code chunk.<br>
 The code chunk below calculates Hansen’s accessibility using <em>ac()</em> of <strong>SpatialAcc</strong> and <em>data.frame()</em> is used to save the output in a data frame called <code>acc_KD2SFCA</code>. Notice that <code>KD2SFCA</code> is used for family argument.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>acc_KD2SFCA <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="fu">ac</span>(hexagons<span class="sc">$</span>demand,</span>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>acc_KD2SFCA <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(SpatialAcc<span class="sc">::</span><span class="fu">ac</span>(hexagons<span class="sc">$</span>demand,</span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>                            eldercare<span class="sc">$</span>capacity,</span>
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>                            distmat_km, </span>
 <span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>                            <span class="at">d0 =</span> <span class="dv">5</span>,</span>
@@ -711,7 +715,7 @@ The code chunk below calculates Hansen’s accessibility using <em>ac()</em> of 
 <p>In this section, you are going to repeat most of the steps you had learned in previous section to perform the analysis. However, some of the codes will be combined into one code chunk.<br>
 The code chunk below calculates Hansen’s accessibility using <em>ac()</em> of <strong>SpatialAcc</strong> and <em>data.frame()</em> is used to save the output in a data frame called <code>acc_SAM</code>. Notice that <code>SAM</code> is used for family argument.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>acc_SAM <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="fu">ac</span>(hexagons<span class="sc">$</span>demand,</span>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>acc_SAM <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(SpatialAcc<span class="sc">::</span><span class="fu">ac</span>(hexagons<span class="sc">$</span>demand,</span>
 <span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>                         eldercare<span class="sc">$</span>capacity,</span>
 <span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>                         distmat_km, </span>
 <span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>                         <span class="at">d0 =</span> <span class="dv">5</span>,</span>
