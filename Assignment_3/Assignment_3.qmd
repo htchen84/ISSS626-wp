@@ -1,0 +1,1215 @@
+---
+title: "Assignment_3"
+author: "HTC"
+date: "October 30, 2025"
+date-modified: "last-modified"
+format:
+  html:
+    toc-depth: 4
+    toc-expand: true
+execute: 
+  eval: true
+  echo: true
+  warning: false
+  freeze: true
+---
+
+## Overview
+
+## Import Packages
+
+```{r}
+pacman::p_load(httr, tidyverse,sf,tmap,jsonlite, progress, spdep,GWmodel, SpatialML,rsample, Metrics, knitr, kableExtra, spatialRF, randomForestExplainer,ggpubr,corrplot,sfdep,gtsummary,performance,RColorBrewer)
+```
+
+## Import and Filter Dataset
+
+```{r}
+#| eval: false
+setwd("C:/Users/HT Chen/Desktop/ISSS626/ISSS626-wp/In-Class_Ex/In-class_Learning_week8")
+HDBresale <- read_csv("data/HDBresale.csv") %>%
+  filter(flat_type == "4 ROOM") %>%
+  filter(month >= "2025-09" & month < "2025-10")
+```
+
+## Aspatial Data Wrangling and Integrating Geometry Retrieval
+
+```{r}
+#| eval: false
+HDBresale$street_name <-gsub(
+  "ST\\.", "SAINT",
+  HDBresale$street_name
+)
+```
+
+```{r}
+#| eval: false
+head(HDBresale)
+```
+
+```{r}
+#| eval: false
+geocode <- function(block, streetname) {
+  base_url <- "https://onemap.gov.sg/api/common/elastic/search"
+  address <- paste(block, streetname, sep = " ")
+  query <- list("searchVal" = address,
+                "returnGeom" = "Y",
+                "getAddrDetails" = "N",
+                "pageNum" = "1")
+  res <- GET(base_url, query = query)
+  restext <- content(res, as= "text")
+  
+  output <- fromJSON(restext) %>%
+    as.data.frame %>%
+    select(results.LATITUDE, results.LONGITUDE)
+  
+  return(output)
+}
+```
+
+Next, the code chunk below will be used to to execute the geocoding function:
+
+```{r}
+#| eval: false
+HDBresale$LATITUDE <- 0
+HDBresale$LONGITUDE <- 0
+
+for (i in 1:nrow(HDBresale)){
+  temp_output <- geocode(HDBresale[i, 4], HDBresale[i, 5])
+  
+  HDBresale$LATITUDE[i] <- temp_output$results.LATITUDE
+  HDBresale$LONGITUDE[i] <- temp_output$results.LONGITUDE
+}
+```
+
+```{r}
+#| eval: false
+setwd("C:/Users/HT Chen/Desktop/ISSS626/ISSS626-wp/In-Class_Ex/In-class_Learning_week8")
+write_rds(HDBresale, "data/model/HDBresale.rds")
+```
+
+```{r}
+setwd("C:/Users/HT Chen/Desktop/ISSS626/ISSS626-wp/In-Class_Ex/In-class_Learning_week8")
+HDBresale <- read_rds("data/model/HDBresale.rds")
+```
+
+### **Converting to an sf object**
+
+Before performing proximity analysis, it is important to ensure that:
+
+-   both input data sets must be in sf objects, and
+
+-   they must be in similar projected coordinates systems.\
+
+In the code chunk below,
+
+-   `st_as_sf()` is used to convert HDBresale tibble data.frame to sf object by using values from LONGITUDE and LATITUDE columns to form the geometry features.
+
+-   `st_transform()` is then used to transform the sf object into svy21 projected coordinates system.
+
+-   the output sf object is called *HDBresale_sf*. It is in **sf data.frame** format.
+
+```{r}
+HDBresale_sf <- HDBresale %>%
+  st_as_sf(
+    coords = c("LONGITUDE","LATITUDE"),
+    crs = 4326) %>%
+  st_transform(crs=3414)
+```
+
+## Geospatial and Asptial Data Wrangling
+
+```{r}
+setwd("C:/Users/HT Chen/Desktop/ISSS626/ISSS626-wp/In-Class_Ex/In-class_Learning_week8")
+preschool = st_read("data/PreSchoolsLocation.kml") %>%
+  st_transform(crs = 3414)
+```
+
+### **Counting number of preschools**
+
+Lastly, code chunk below will be used to count the number of pre-schools located within 350m of each HDB property.
+
+```{r}
+within_350m <- st_is_within_distance(
+  HDBresale_sf, preschool, dist= 350)
+
+HDBresale_sf <- HDBresale_sf %>%
+  mutate(prischool_350m = map_int(within_350m, length))
+```
+
+### **Computing shortest distance**
+
+Instead of counting number of preschools located within 350m of each HDB resale property, code chunk below is used to compute the distance between the nearest preschool from each HDB resale property.
+
+```{r}
+HDBresale_sf <- HDBresale_sf %>%
+  mutate(
+    PROX_PRESCHOOL = as.numeric(
+      st_distance(geometry,
+                  preschool[st_nearest_feature(
+                    geometry, preschool), ], 
+                  by_element = TRUE)
+      )
+    )
+```
+
+```{r}
+setwd("C:/Users/HT Chen/Desktop/ISSS626/ISSS626-wp/Hands-on_Ex/Hands-on_Ex08")
+mdata <- read_rds("data/rawdata/mdata.rds")
+```
+
+```{r}
+set.seed(1234)
+HDB_sample <- mdata %>%
+  sample_n(1500)
+```
+
+```{r}
+Overlapping_points <- HDB_sample %>%
+  mutate(overlap = length(st_equals(., .))>1)
+```
+
+```{r}
+HDB_sample <- HDB_sample %>%
+  st_jitter(amount = 1)
+```
+
+```{r}
+colnames(HDB_sample)
+```
+
+## Exploratory Data Analysis (EDA)
+
+### **EDA using statistical graphics**
+
+```{r}
+ggplot(data=HDB_sample, 
+       aes(x=`resale_price`)) +
+  geom_histogram(bins=30, 
+                 color="black", 
+                 fill="light blue")
+```
+
+The histogram shows that:
+
+Most resale prices cluster between \$280,000 and \$500,000.
+
+The distribution has a long right tail, meaning a smaller number of flats have very high prices (e.g., \> \$700,000).
+
+This means the majority of HDB flats are moderately priced, but a few high-value flats (executive units, larger flats, central locations) pull the tail to the right.
+
+Statistically, the skewed dsitribution can be normalised by using log transformation. The code chunk below is used to derive a new variable called LOG_resale_price by using a log transformation on the variable resale_price. It is performed using `mutate()` of **dplyr** package.
+
+```{r}
+HDB_sample <- HDB_sample %>%
+  mutate(`LOG_resale_price` = log(resale_price))
+```
+
+```{r}
+ggplot(data=HDB_sample, 
+       aes(x=`LOG_resale_price`)) +
+  geom_histogram(bins=30, 
+                 color="black", 
+                 fill="light blue")
+```
+
+```{r}
+colnames(HDB_sample)
+```
+
+### **Multiple Histogram Plots distribution of variables**
+
+Small multiple histograms (also known as trellis plot) by using `ggarrange()` of [**ggpubr**](https://cran.r-project.org/web/packages/ggpubr/index.html) package.
+
+The code chunk below is used to create 12 histograms. Then, `ggarrange()` is used to organised these histogram into a 3 columns by 4 rows small multiple plot.
+
+```{r}
+floor_area_sqm <- ggplot(data=HDB_sample, 
+                   aes(x= `floor_area_sqm`)) +
+  geom_histogram(bins=20, 
+                 color="black", 
+                 fill="light blue")
+
+remaining_lease_mths <- ggplot(data=HDB_sample, 
+              aes(x= `remaining_lease_mths`)) +
+  geom_histogram(bins=20, 
+                 color="black", 
+                 fill="light blue")
+
+PROX_HAWKER <- ggplot(data=HDB_sample, 
+                   aes(x= `PROX_HAWKER`)) +
+  geom_histogram(bins=20, 
+                 color="black", 
+                 fill="light blue")
+
+PROX_MRT <- ggplot(data=HDB_sample, 
+                         aes(x= `PROX_MRT`)) + 
+  geom_histogram(bins=20, 
+                 color="black", 
+                 fill="light blue")
+
+PROX_ELDERLYCARE <- ggplot(data=HDB_sample, 
+                           aes(x= `PROX_ELDERLYCARE`)) +
+  geom_histogram(bins=20, 
+                 color="black", 
+                 fill="light blue")
+
+WITHIN_350M_CHILDCARE <- ggplot(data=HDB_sample, 
+                               aes(x= `WITHIN_350M_CHILDCARE`)) +
+  geom_histogram(bins=20, 
+                 color="black", 
+                 fill="light blue")
+
+PROX_SUPERMARKET <- ggplot(data=HDB_sample, 
+                             aes(x= `PROX_SUPERMARKET`)) +
+  geom_histogram(bins=20, 
+                 color="black", 
+                 fill="light blue")
+
+PROX_GOOD_PRISCH <- ggplot(data=HDB_sample, 
+                            aes(x= `PROX_GOOD_PRISCH`)) +
+  geom_histogram(bins=20, 
+                 color="black", 
+                 fill="light blue")
+
+PROX_MALL <- ggplot(data=HDB_sample, 
+                   aes(x= `PROX_MALL`)) +
+  geom_histogram(bins=20, 
+                 color="black", 
+                 fill="light blue")
+
+PROX_PARK <- ggplot(data=HDB_sample, 
+                    aes(x= `PROX_PARK`)) +
+  geom_histogram(bins=20, 
+                 color="black", 
+                 fill="light blue")
+
+WITHIN_350M_KINDERGARTEN <- ggplot(data=HDB_sample, 
+                           aes(x= `WITHIN_350M_KINDERGARTEN`)) +
+  geom_histogram(bins=20, 
+                 color="black", 
+                 fill="light blue")
+
+PROX_CBD <- ggplot(data=HDB_sample, 
+                               aes(x= `PROX_CBD`)) +
+  geom_histogram(bins=20, 
+                 color="black", 
+                 fill="light blue")
+
+ggarrange(floor_area_sqm, remaining_lease_mths, PROX_HAWKER, PROX_MRT, 
+          PROX_ELDERLYCARE, WITHIN_350M_CHILDCARE,
+          PROX_SUPERMARKET, PROX_GOOD_PRISCH, PROX_MALL,
+          PROX_PARK, WITHIN_350M_KINDERGARTEN, PROX_CBD,  
+          ncol = 3, nrow = 4)
+```
+
+### **Drawing Statistical Point Map**
+
+```{r}
+setwd("C:/Users/HT Chen/Desktop/ISSS626/ISSS626-wp/Hands-on_Ex/Hands-on_Ex07")
+mpsz = st_read(dsn = "data/geospatial", 
+               layer = "MP14_SUBZONE_WEB_PL")
+```
+
+```{r}
+mpsz_svy21 <- st_transform(mpsz, 3414)
+```
+
+```{r}
+tmap_mode("plot")
+```
+
+### Point Symbol Map
+
+```{r}
+tm_shape(mpsz_svy21)+
+  tm_polygons() +
+tm_shape(HDB_sample) +  
+  tm_dots(fill = "resale_price",
+          fill_alpha = 0.6,
+          size = 0.5,
+          fill.scale = tm_scale_intervals(
+            style="quantile")) +
+  tm_view(set_zoom_limits = c(11,14))
+```
+
+## **Hedonic Pricing Modelling in R**
+
+### **Simple Linear Regression Method(Conventional OLS Not Recommended) for Demonstration**
+
+```{r}
+HDB_sample_slr <- lm(formula=resale_price ~ floor_area_sqm, 
+                data = HDB_sample)
+```
+
+```{r}
+summary(HDB_sample_slr)
+```
+
+```{r}
+ggplot(data=HDB_sample,  
+       aes(x=`floor_area_sqm`, y=`resale_price`)) +
+  geom_point() +
+  geom_smooth(method = lm)
+```
+
+## **Multiple Linear Regression Method**
+
+### Multicollinearity Check
+
+```{r}
+colnames(HDB_sample)
+```
+
+```{r}
+str(HDB_sample)
+```
+
+```{r}
+head(HDB_sample)
+```
+
+```{r}
+HDB_sample_num <- HDB_sample %>% 
+  st_drop_geometry() %>%
+  select(where(is.numeric))
+```
+
+```{r}
+str(HDB_sample_num)
+```
+
+```{r}
+corrplot(cor(HDB_sample_num[, 1:18]), 
+         diag = FALSE, 
+         order = "AOE",
+         tl.pos = "td", 
+         tl.cex = 0.6, 
+         number.cex = 0.4,
+         method = "number", 
+         type = "upper")
+```
+
+**1. Very Strong Correlations**
+
+**🔵 LOG_resale_price vs resale_price (\~0.98)**
+
+Expected, because log price is a transformation of the actual resale price.
+
+They should not be used together in regression (perfect multicollinearity).
+
+**2. Moderate Positive Relationships**
+
+**🔵 Prox_CBD vs Prox_GOOD_PRISCH(\~0.65)**
+
+HDB flats closer to the CBD also tend to be closer to good primary schools.
+
+This reflects location-based clustering:
+
+The central region has both higher prestige schools and shorter distances to the CBD.
+
+**🔵 Prox_CBD vs resale_price (\~0.62)**
+
+The farther a flat is from the CBD, the lower its resale price tends to be
+
+### **Filter the Multicollinearity Factor**
+
+```{r}
+HDB_sample <- HDB_sample %>% select(-PROX_CBD)
+```
+
+```{r}
+colnames(HDB_sample)
+```
+
+### **Building a hedonic pricing model using multiple linear regression method**
+
+```{r}
+HDB_sample_mlr <- lm(
+  formula = resale_price ~ floor_area_sqm + storey_order  + 
+    remaining_lease_mths + PROX_ELDERLYCARE + PROX_HAWKER +
+    PROX_MRT + PROX_PARK  +
+    PROX_GOOD_PRISCH + PROX_MALL +
+    PROX_CHAS  + PROX_SUPERMARKET + 
+    WITHIN_350M_KINDERGARTEN   + WITHIN_350M_CHILDCARE + 
+    WITHIN_350M_BUS + WITHIN_1KM_PRISCH, 
+  data=HDB_sample)
+summary(HDB_sample_mlr)
+```
+
+### **Revising the model**
+
+```{r}
+HDB_sample_mlr1 <- lm(
+  formula = resale_price ~ floor_area_sqm + storey_order  + 
+    remaining_lease_mths + PROX_ELDERLYCARE + PROX_HAWKER +
+    PROX_MRT + PROX_PARK +
+    PROX_GOOD_PRISCH  + PROX_SUPERMARKET + 
+    WITHIN_350M_KINDERGARTEN + 
+    WITHIN_350M_BUS + WITHIN_1KM_PRISCH, 
+  data=HDB_sample)
+summary(HDB_sample_mlr1)
+```
+
+### **Multi Linear Regression Model Analysis**
+
+✔️ **p \< 0.05 (** or *)*\*
+
+Moderate evidence the variable is significant.
+
+Independent variables are statistically significant like floor_area_sqm, storey_order, remaining_lease_mths, prox_elderlycare, prox_hawker, prox_mrt, prox_park, prox_good_prisch, prox_mall, prox_chas, prox_supermarket, within_350m_kindergarten, within_350m_bus, within_1km_prisch
+
+❌ **p \> 0.05 (no stars)**
+
+The variable is not statistically significant like prox_mall, prox_chas and within_350m_childcare →\
+It does not have meaningful explanation in this model.
+
+**Adjusted R²**\
+Adjusted R² tells how much of the variation in resale price is explained by the model after penalizing for the number of variables.
+
+### **Interpretation:**
+
+The model explains \~59.8% of the variation in HDB resale prices.
+
+This is moderately strong for housing data.
+
+It means that structural and locational factors together account for about 60% of price differences, while the remaining 40% may due to:
+
+-   unobserved buyer preferences,
+
+-   unit condition,
+
+-   renovation works,
+
+-   noise or congestion levels,
+
+-   location-specific externalities not included in the model.
+
+### **Preparing Publication Quality Table: gtsummary method**
+
+```{r}
+tbl_regression(HDB_sample_mlr1, intercept = TRUE)
+```
+
+```{r}
+tbl_regression(HDB_sample_mlr1, 
+               intercept = TRUE) %>% 
+  add_glance_source_note(
+    label = list(sigma ~ "\U03C3"),
+    include = c(r.squared, adj.r.squared, 
+                AIC, statistic,
+                p.value, sigma))
+```
+
+### **Regression Diagnostics**
+
+#### Multicollinearity test
+
+Multicollinearity occurs when independent variables are not truly independent, meaning a change in one is associated with a change in another. This makes it hard for the model to isolate each variable’s influence on the outcome.
+
+Performing a multicollinearity test is crucial in multiple linear regression because it ensures the reliability and interpretability of the model’s results. High multicollinearity, where independent variables are highly correlated, inflates the variance of the estimated coefficients, making them unstable, unreliable, and difficult to interpret. This instability can lead to misleading statistical conclusions, such as a variable appearing statistically insignificant when it is not.
+
+In the code chunk below, the [check_collinearity()](https://easystats.github.io/performance/reference/check_collinearity.html) of performance package is used to test if there are sign of multicollinearity.
+
+```{r}
+check_collinearity(HDB_sample_mlr1)
+```
+
+```{r}
+mlr.vif <- check_collinearity(HDB_sample_mlr1)
+plot(mlr.vif)
+```
+
+Since the VIF of the independent variables are less than 10. We can safely conclude that there are no sign of multicollinearity among the independent variables.
+
+#### Test for Non-Linearity
+
+```{r}
+check_model(HDB_sample_mlr1,
+            check = "linearity")
+```
+
+The figure above reveals that most of the data poitns are scattered around the 0 line, hence we can safely conclude that the relationships between the dependent variable and independent variables are linear.
+
+#### Test for Normality Assumption
+
+The normality assumption test for multiple linear regression checks if the model’s residuals (the differences between observed and predicted values) are normally distributed. This is crucial for accurate hypothesis testing and confidence intervals. To test this, you can use visual methods like histograms and Q-Q plots of the residuals, or conduct statistical tests like Shapiro-Wilk test and Kolmogorov-Smirnov test.
+
+```{r}
+check_normality(HDB_sample_mlr1)
+```
+
+The print above reveals that the p-value of the normality assumption test is less than alpha value of 0.05. Hence we reject the normality assumption at 95% confident level.\
+
+Instead of showing the test statistic, `plot()` of **see** package can be used to plot a the output of `check_normality()` for visual inspection as shown below.
+
+```{r}
+plot(check_normality(HDB_sample_mlr1), 
+     type = "qq")
+```
+
+From the Q-Q plot, the points on the far right curve above the line and This means the model produces large positive residuals for some observations.
+
+Interpretation,
+
+There are flats where the model underpredicts price and possibly high-end flats or outliers(rare higher price flats)
+
+```{r}
+check_model(HDB_sample_mlr1,
+            check= "normality")
+```
+
+The figure reveals that the residual of the multiple linear regression model is resemble normal distribution.
+
+#### Testing for Spatial Autocorrelation
+
+Because a hedonic pricing model is built using geographically referenced data, it is essential to assess spatial autocorrelation before interpreting the results. Traditional regression techniques, such as ordinary least squares (OLS), assume that observations are independent of one another. Spatial data frequently violates this assumption because nearby locations tend to share similar characteristics.
+
+Spatial autocorrelation refers to the degree to which a variable is correlated with itself across space.
+
+Positive spatial autocorrelation occurs when nearby locations exhibit similar values.
+
+Negative spatial autocorrelation occurs when nearby values are dissimilar.
+
+Failing to account for spatial autocorrelation in a regression model can result in several serious issues:
+
+Biased and inefficient coefficient estimates: When autocorrelation exists, standard errors become unreliable, which affects hypothesis testing and inflates the apparent significance of variables.
+
+Misleading p-values: OLS cannot distinguish true variable effects from underlying spatial patterns, causing inaccurate inference.
+
+Model misspecification: Significant spatial autocorrelation in the residuals suggests that key spatial processes or variables have been omitted. Spatially patterned residuals often reveal where the model is under- or over-predicting.
+
+Higher Type I error rates: Researchers may incorrectly conclude that a variable is significant when it is not.
+
+To formally assess this, a Moran’s I test can be applied to the regression residuals. A statistically significant Moran’s I indicates that the model has not fully captured the underlying spatial structure.
+
+Before conducting the test, the residuals from the hedonic model must be extracted and saved as a separate spatial data frame, ensuring they retain their geographic coordinates for spatial autocorrelation analysis.
+
+```{r}
+mlr.output <- as.data.frame(HDB_sample_mlr1$residuals)
+```
+
+```{r}
+HDB_sample_1 <- cbind(HDB_sample, 
+                    HDB_sample_mlr1$residuals) %>%
+rename(`MLR_RES` = `HDB_sample_mlr1.residuals`)
+```
+
+use **tmap** package to display the distribution of the residuals on an interactive map.
+
+```{r}
+tmap_mode("plot")
+```
+
+```{r}
+tm_shape(mpsz_svy21) +
+  tm_polygons(fill_alpha = 0.4) +
+tm_shape(HDB_sample_1) +  
+  tm_dots(
+    fill = "MLR_RES",
+    size = 0.7,
+    col = "black",
+    fill.scale = tm_scale(
+      n = 10,
+      values = rev(
+        brewer.pal(11, "RdBu")),
+      style = "quantile",
+      midpoint = NA),
+    fill.legend = tm_legend(title = "Residuals")
+  ) + 
+  tm_title("LM Residuals (Quantile Classification)") +
+  tm_layout(legend.outside = TRUE) +
+  tm_view(set_zoom_limits = c(11,14))
+```
+
+```{r}
+colnames(HDB_sample_1)
+```
+
+compute the distance-based weight matrix by using [`st_dist_band()`](https://sfdep.josiahparry.com/reference/st_dist_band) function of **sfdep**
+
+```{r}
+HDB_sample_2 <- HDB_sample_1 %>%
+  mutate(
+    nb = st_dist_band(
+      st_geometry(geometry), 
+                 upper = 2000),
+    wt = st_weights(
+      nb, style = "W"),
+    .before = 1) 
+```
+
+```{r}
+set.seed(1234)
+global_moran_perm(
+  HDB_sample_2$MLR_RES, 
+  nb = HDB_sample_2$nb, 
+  wt = HDB_sample_2$wt,
+  alternative = "two.sided", 
+  nsim = 499)
+```
+
+Moran’s I statistic = 0.40952
+
+This value measures spatial autocorrelation in your regression residuals.
+
+Interpret the magnitude:
+
+0.41 is high for residuals
+
+Typical Moran’s I values range from -1 to +1
+
+-   0 → random pattern
+
+-   +1 → strong clustering
+
+-   -1 → strong dispersion (checkerboard pattern)
+
+There is strong positive spatial autocorrelation in the residuals.\
+
+Nearby HDB flats have similar residual values (clusters of overprediction or underprediction).
+
+p-value \< 2.2e-16:
+
+The spatial autocorrelation is highly statistically significant.\
+
+This is not due to random chance.
+
+Observed rank = 500 (highest possible):
+
+Out of all 499 random permutations + 1 observed value
+
+Your observed Moran’s I = largest value
+
+None of the random simulations came close to your actual autocorrelation
+
+This strengthens the evidence that the spatial clustering is real and strong.
+
+Since the Observed Global Moran I = 0.14389 which is greater than 0, we can infer than the residuals resemble cluster distribution.
+
+## **Building Hedonic Pricing Models using GWmodel**
+
+Modelling hedonic pricing using both the fixed and adaptive bandwidth schemes
+
+### **Building Fixed Bandwidth GWR Model**
+
+#### Computing fixed bandwith
+
+In the code chunk below, the `bw.gwr()` function from the GWModel package is used to determine the optimal fixed bandwidth for the GWR model. Because the argument `adaptive = FALSE` is specified, the function will compute a fixed (distance-based) bandwidth rather than an adaptive one.
+
+There are two main methods available for selecting the optimal bandwidth:
+
+1.  Cross-validation (CV)
+
+2.  Corrected Akaike Information Criterion (AICc)
+
+In this example, the stopping rule for bandwidth selection is determined using the method specified in the `approach` argument.
+
+```{r}
+bw_fixed <- bw.gwr(
+  formula = resale_price ~ floor_area_sqm + storey_order  + 
+    remaining_lease_mths + PROX_ELDERLYCARE  +
+    PROX_MRT + PROX_PARK   +
+    PROX_GOOD_PRISCH  + PROX_SUPERMARKET + PROX_MALL +
+    WITHIN_350M_KINDERGARTEN + PROX_CHAS + 
+    WITHIN_350M_BUS + WITHIN_1KM_PRISCH, 
+  data=HDB_sample_2, 
+  approach="CV", 
+  kernel="gaussian", 
+  adaptive=FALSE, 
+  longlat=FALSE)
+```
+
+The result shows that the recommended bandwidth is 1132.564
+
+#### GWModel method - fixed bandwith
+
+```{r}
+gwr.fixed <- gwr.basic(
+  formula = resale_price ~ floor_area_sqm + storey_order  + 
+    remaining_lease_mths + PROX_ELDERLYCARE +
+    PROX_MRT + PROX_PARK   +
+    PROX_GOOD_PRISCH  + PROX_SUPERMARKET + PROX_MALL +
+    WITHIN_350M_KINDERGARTEN + PROX_CHAS + 
+    WITHIN_350M_BUS + WITHIN_1KM_PRISCH, 
+  data=HDB_sample_2,  
+  bw=bw_fixed, 
+  kernel = 'gaussian', 
+  longlat = FALSE)
+```
+
+```{r}
+gwr.fixed
+```
+
+#### GWModel Method - Fixed Bandwidth Analysis
+
+Adjusted R-squared (GWR): 0.9343
+
+### Interpretation:
+
+The GWR model explains 93.4% of the variation in resale prices.
+
+This is a very large improvement over the global OLS model (Adj R² ≈ 0.571).
+
+This tells us:
+
+-   Spatial variation is extremely important in explaining HDB prices.
+
+-   The determinants of price vary significantly across space.
+
+-   The global OLS model was missing spatial structure and averaging out effects.
+
+### Interpretation:
+
+Almost all variables have p \< 0.001, meaning they are strongly associated with resale prices on average.
+
+However, global p-values no longer reflect local significance.
+
+In GWR:
+
+The importance of variables changes across space.
+
+### From GWR output:
+
+```         
+   AIC:  38050.17    AICc:  38050    BIC:  36739.57
+```
+
+### Interpretation:
+
+AIC dropped by almost 3,000 points.
+
+This is an extremely large improvement in model fit.
+
+AICc and BIC also show major reduction → confirms the model is superior even after penalizing complexity.
+
+\
+\
+**1. PROX_MRT**
+
+### Very wide coefficient range
+
+Large negative coefficient→ farther from MRT reduces price strongly
+
+Positive coefficient→ being close from MRT increases price
+
+### Regional variation is expected
+
+Singapore has strong spatial differences in:
+
+-   transport reliance
+
+-   noise tolerance
+
+-   income levels
+
+-   travel patterns
+
+**2. PROX_PARK**
+
+### Large negative → distance from parks reduces value
+
+Especially near large parks:
+
+-   Bishan–Ang Mo Kio Park
+
+-   East Coast Park
+
+-   West Coast Park
+
+-   Jurong Lake Gardens
+
+-   Bukit Batok Nature Park
+
+These are major green amenities.
+
+### Positive values occur in areas:
+
+-   where small parks have limited amenity value
+
+-   where parks bring noise (sports courts)
+
+-   lower-end parks or small pocket parks add little value
+
+-   perceived safety concerns in some neighbourhood parks
+
+**3. PROX_GOOD_PRISCH**
+
+Negative coefficients → closer to good school = higher value
+
+-   Strong effect in places like Bukit Timah, Bishan, Marine Parade, Queenstown
+
+-   High competition for school enrollment
+
+Positive coefficients → weaker or adverse school effect
+
+Likely in areas:
+
+-   with oversupply of schools
+
+-   where elite schools are far
+
+-   where accessibility to schools is not a priority for the demographic
+
+**4. PROX_SUPERMARKET**
+
+Negative → far from supermarket reduces value
+
+Daily convenience is critical for many families.
+
+Positive → further is better
+
+This can happen when:
+
+-   supermarkets bring congestion
+
+-   noise from loading bays
+
+-   smells (wet markets)
+
+-   high-traffic areas around malls
+
+**5. WITHIN_350M_KINDERGARTEN**
+
+Positive coefficients → proximity to childcare highly valued
+
+Especially in:
+
+young towns (Punggol, Sengkang)
+
+family-heavy estates
+
+newer precincts with more young buyers
+
+Negative coefficients → oversupply or negative externalities
+
+too many childcare centres = no competitive advantage
+
+noise during drop-off/pick-up
+
+not valued by singles or elderly households
+
+### **Building Adaptive Bandwidth GWR Model**
+
+Calibrate the gwr-based hedonic pricing model by using adaptive bandwidth approach
+
+#### Computing the adaptive bandwidth
+
+```{r}
+bw.adaptive <- bw.gwr(
+  formula = resale_price ~ floor_area_sqm + storey_order  + 
+    remaining_lease_mths + PROX_ELDERLYCARE + PROX_HAWKER +
+    PROX_MRT + PROX_PARK   +
+    PROX_GOOD_PRISCH  + PROX_SUPERMARKET + PROX_MALL +
+    WITHIN_350M_KINDERGARTEN  + WITHIN_350M_CHILDCARE+
+    WITHIN_350M_BUS + WITHIN_1KM_PRISCH, 
+  data=HDB_sample_2,  
+  approach="CV", 
+  kernel="gaussian", 
+  adaptive=TRUE, 
+  longlat=FALSE)
+```
+
+```{r}
+colnames(HDB_sample_2)
+```
+
+```{r}
+gwr.adaptive <- gwr.basic(
+  formula = resale_price ~ floor_area_sqm + storey_order  + 
+    remaining_lease_mths + PROX_ELDERLYCARE + PROX_HAWKER +
+    PROX_MRT + PROX_PARK   +
+    PROX_GOOD_PRISCH  + PROX_SUPERMARKET + PROX_MALL +
+    WITHIN_350M_KINDERGARTEN + WITHIN_350M_CHILDCARE +
+    WITHIN_350M_BUS + WITHIN_1KM_PRISCH, 
+  data=HDB_sample_2,  
+  bw=bw.adaptive, 
+  kernel = 'gaussian', 
+  adaptive=TRUE, 
+  longlat = FALSE)
+```
+
+```{r}
+gwr.adaptive
+```
+
+#### GWModel Method - Adaptive Bandwidth Analysis
+
+Adjusted R² = 0.9413
+
+\~94% of the variation in resale prices is explained by the locally varying coefficients.
+
+Shows a substantial improvement over:
+
+OLS Adjusted R² ≈ 0.598
+
+GWR fixed Adjusted R² ≈ 0.934
+
+Adaptive GWR fits the data slightly better than fixed GWR due to more flexible neighbourhood structures.
+
+**AIC = 34,770.83**
+
+**AICc = 35,757.03**
+
+**BIC = 36,391.6**
+
+**Interpretation:**
+
+Adaptive GWR outperforms:
+
+-   Global OLS (AIC ≈ 38,052)
+
+-   GWR fixed (AIC ≈ 35,082)
+
+Spatial heterogeneity is strong, and adaptive neighbourhoods capture it better.
+
+**Spatial Weighting & Interpretation**
+
+**Bandwidth = 19 nearest neighbours**\
+→ Each location uses the nearest 19 observations regardless of physical distance.
+
+-   **Dense towns (e.g., Hougang, Ang Mo Kio):**\
+    Nearest 19 points are very close → captures fine local variation.
+
+-   **Sparse areas (e.g., Sembawang, Tengah):**\
+    Nearest 19 points may be further apart → prevents unstable coefficients.
+
+**Result**:
+
+Adaptive GWR produces more stable and regionally appropriate estimates especially in mixed-density cities like Singapore.
+
+**Interpretation of Key Locational Factors (Adaptive GWR)**
+
+**A. PROX_MRT**
+
+➡ Most spatially heterogeneous predictor
+
+Negative areas (up to –527k)
+
+Strong MRT dependence (Yishun, Pasir Ris, Sengkang)
+
+Being far from MRT produces large price penalties
+
+Positive areas (up to +183k)
+
+Being closer to MRT lowers value due to:
+
+-   train noise & track vibration
+
+-   crowding at interchange stations
+
+-   undesirable “busy environment”
+
+-   preference for car-centric, quieter neighbourhoods (Bukit Timah, Serangoon Gardens)
+
+**B. PROX_PARK**
+
+Negative coefficients (–320k)
+
+-   Properties far from large parks lose value (e.g., Jurong Lake Gardens, EC Park, Bishan Park)
+
+Positive coefficients (+493k)
+
+In some regions, being closer to a park is undesirable:
+
+-   noise from playgrounds or sports courts
+
+-   safety concerns at night
+
+-   small, low-value pocket parks
+
+**C. PROX_GOOD_PRISCH**
+
+Strongest negative effect (–629k)
+
+-   Top academic clusters (Bishan, Bukit Timah, Clementi)
+
+-   Parents compete intensely → huge proximity premium
+
+Positive effect (+118k)
+
+Areas where:
+
+-   fewer elite schools → lower valuation impact
+
+-   oversupply of schools reduces differentiation
+
+-   demographic groups (elderly precincts) do not value school access
+
+**D. PROX_SUPERMARKET**
+
+Negative
+
+-   Daily convenience increases value
+
+Positive (+356k)
+
+Supermarkets and malls become disamenities:
+
+-   loading bay noise
+
+-   evening congestion
+
+-   smells from wet markets
+
+-   traffic jams around malls
+
+**E. WITHIN_350M_KINDERGARTEN**
+
+Negative (–38k)
+
+Oversupply in some areas → reduced marginal benefit
+
+Noise during peak hours
+
+Positive (+33k)
+
+Strong positive effect in:
+
+Punggol, Sengkang (family-oriented towns)
+
+HDB new-generation estates
+
+### **Stable Structural Predictors**
+
+These have tight coefficient ranges:
+
+-   **floor_area_sqm**
+
+-   **storey_order**
+
+-   **remaining_lease_mths**
+
+➡ They behave consistently across Singapore → structural rather than locational.
+
+### **Visualising GWR Output**
+
+### **Converting SDF into *sf* data.frame**
+
+```{r}
+HDB_sample_2_adaptive <- st_as_sf(gwr.adaptive$SDF) %>%
+  st_transform(crs=3414)
+```
+
+```{r}
+glimpse(HDB_sample_2_adaptive)
+```
+
+### **Visualising local R2**
+
+```{r}
+tm_shape(mpsz_svy21)+
+  tm_polygons(fill_alpha = 0.1) +
+tm_shape(HDB_sample_2_adaptive) +  
+  tm_dots(col = "Local_R2",
+          border.col = "gray60",
+          border.lwd = 1) +
+  tm_view(set.zoom.limits = c(11,14))
+
+tmap_mode("plot")
+```
+
+The map visualizes Local R² values from the Adaptive GWR model, showing how well the model explains resale price variation at each specific location across Singapore. Local R² ranges roughly from 0.65 to 1.00, indicating substantial spatial variability in model performance.
+
+\
+**High Local R² Clusters (0.90 – 1.00)**
+
+These areas appear as **dark blue points**, concentrated mainly in:
+
+**Central Region**
+
+-   Bishan
+
+-   Toa Payoh
+
+-   Bukit Timah
+
+-   Queenstown
+
+-   Clementi
+
+**Mature Towns (West + East)**
+
+-   Bedok
+
+-   Ang Mo Kio
+
+-   Hougang
+
+-   Jurong East
+
+**Interpretation**
+
+These are locations where the model captures local price variation extremely well, suggesting:
+
+-   Strong alignment between housing demand and included variables
+
+-   Well-defined neighbourhood characteristics
+
+-   Locational factors (schools, MRT, supermarkets, parks) have **consistent and strong effects**\
+
+These towns:
+
+-    have stable, long-established amenities
+
+-   exhibit strong socio-economic patterns (e.g., school demand, transport, green spaces)
+
+-   show consistent structural behaviour (floor area, storey order)
+
+### **Visualising coefficient estimates**
+
+```{r}
+AREA_SQM_SE <- tm_shape(mpsz_svy21) +
+  tm_polygons(fill_alpha = 0.1) +
+tm_shape(HDB_sample_2_adaptive) +
+  tm_dots(
+    fill = "floor_area_sqm_SE",       # Use fill= for variable-based colour
+    col = "gray60",             # Border colour
+    size = 0.07,
+    lwd = 1
+  )
+
+AREA_SQM_TV <- tm_shape(mpsz_svy21) +
+  tm_polygons(fill_alpha = 0.1) +
+tm_shape(HDB_sample_2_adaptive) +
+  tm_dots(
+    fill = "floor_area_sqm_TV",       # Use fill= for variable-based colour
+    col = "gray60",             # Border colour
+    size = 0.07,
+    lwd = 1
+  )
+
+tmap_arrange(
+  AREA_SQM_SE,
+  AREA_SQM_TV,
+  asp = 1,
+  ncol = 2,
+  sync = TRUE
+)
+
+```
+
+Left Map — floor_area_sqm_SE (Standard Error Map)
+
+This map visualises the standard error of the local regression coefficient for `floor_area_sqm` across every subzone.
+
+Standard Error (SE) represents the uncertainty or instability of the coefficient estimate in each location.
+
+**Key insight**
+
+Many areas have very low SE, suggesting that the coefficient for floor area is quite stable across most of Singapore.
+
+High-SE pockets may indicate neighbourhoods where floor area is less predictive of resale price (e.g., areas dominated by newer apartments, mixed housing types, or gentrifying areas).
+
+Right Map — floor_area_sqm_TV (t-value Map)
+
+This map visualises the t-value of the coefficient — a measure of statistical significance.
+
+**Key insight**
+
+Most significant signals appear in the central and mature towns, indicating:
+
+In these places, unit size strongly influences resale price.
+
+Fringe regions show weaker significance → price may depend more on location or age than on floor area.
