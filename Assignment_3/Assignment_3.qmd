@@ -1151,7 +1151,7 @@ These are locations where the model captures local price variation extremely wel
 
 These towns:
 
--    have stable, long-established amenities
+-   have stable, long-established amenities
 
 -   exhibit strong socio-economic patterns (e.g., school demand, transport, green spaces)
 

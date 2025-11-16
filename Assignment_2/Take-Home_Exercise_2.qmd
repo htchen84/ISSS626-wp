@@ -140,10 +140,6 @@ BusStop_in_SG <- st_join(
 ```
 
 ```{r}
-class(BusStop)
-```
-
-```{r}
 tm_shape(mpsz) +
   tm_polygons() +
 tm_shape(BusStop_in_SG) +
@@ -162,10 +158,6 @@ st_crs(mpsz)
 
 ```{r}
 st_crs(BusStop)
-```
-
-```{r}
-
 ```
 
 ## **2.5.2 Deriving Analytical Hexagon** of 375m
@@ -243,6 +235,10 @@ class(mpsz)
 ```
 
 ```{r}
+head(odbus)
+```
+
+```{r}
 #hexagon$n_collisions =
 #  lengths(st_intersects(
 #    hexagon, BusStop_in_SG))
@@ -252,8 +248,12 @@ class(mpsz)
 ```
 
 ```{r}
+colnames(odbus)
+```
+
+```{r}
 trips <- odbus %>%
-  select(c(ORIGIN_PT_CODE, DAY_TYPE, TIME_PER_HOUR, TOTAL_TRIPS)) %>%
+  select(c(YEAR_MONTH, ORIGIN_PT_CODE, DAY_TYPE, TIME_PER_HOUR, TOTAL_TRIPS)) %>%
   rename(BUS_STOP_N = ORIGIN_PT_CODE) %>%
   rename(HOUR_OF_DAY = TIME_PER_HOUR) %>%
   rename(TRIPS = TOTAL_TRIPS)
@@ -277,6 +277,7 @@ kable(head(trips))
 ```{r}
 trips <- trips %>%
   group_by(
+    YEAR_MONTH,
     HEX_ID,
     DAY_TYPE,
     HOUR_OF_DAY) %>%
@@ -360,18 +361,6 @@ hex_ok   <- st_make_valid(hex_agg)
 ```
 
 ```{r}
-
-```
-
-```{r}
-colnames(mpsz)
-```
-
-```{r}
-
-```
-
-```{r}
 mpsz <- mpsz %>%
   mutate(
     SUBZONE_N = str_match(Description, "SUBZONE_N</th>\\s*<td>([^<]+)")[,2],
@@ -400,57 +389,106 @@ mpsz_trips <- hex_tagged %>%
 
 ```
 
-hex_in_subzone \<- st_intersection( mpsz %\>% select(SUBZONE_N), hex_ok %\>% select(TOTAL_TRIPS, period) )
-
-subzone_trips \<- hex_in_subzone %\>% st_drop_geometry() %\>% group_by(SUBZONE_N, period) %\>% summarise(TOTAL_TRIPS = sum(TOTAL_TRIPS, na.rm = TRUE), .groups = "drop")
-
-mpsz_trips \<- mpsz %\>% left_join(subzone_trips, by = "SUBZONE_N")
-
 ```{r}
-mpsz_trips
-
-```
-
-```{r}
-
-```
-
-```{r}
-tmap_mode("plot")
-
-tm_shape(mpsz_trips) +
-  tm_fill("TOTAL_TRIPS", 
-          style = "quantile", 
-          palette = "YlOrRd",
-          title = "Total Trips") +
-  tm_borders(col = "white", lwd = 0.3) +
-  tm_facets(by = "period", ncol = 1) +
-  tm_layout(
-    main.title = "Passenger Trips by Subzone (Study Area Count Style)",
-    legend.outside = TRUE
-  )
+head(mpsz_trips)
 
 ```
 
 ## 2.5.4 Display the geographical distribution of the passenger trips by using appropriate geovisualisation methods
 
 ```{r}
-tmap_mode("plot")
-options(tmap.width = 1500, tmap.height = 2000)
-
-tm_shape(hex_agg) +
-  tm_fill("TOTAL_TRIPS",
-          style = "quantile",
-          title = "Trips",
-          palette = "-RdYlBu",
-          legend.format = list(text.separator = "–")) +
-  tm_borders(col = "grey40", lwd = 0.3) +
-  tm_facets(by = "period", ncol = 1, free.scales = FALSE) +
-  tm_layout(
-    main.title = "Passenger Trips by Hexagon (Aggregated to Peak Windows)",
-    legend.outside = TRUE
-  )
+tm_shape(mpsz)+
+  tm_polygons() +
+tm_shape(hex_agg) +  
+  tm_dots(fill = "TOTAL_TRIPS",
+          fill_alpha = 0.6,
+          size = 0.5,
+          fill.scale = tm_scale_intervals(
+            style="quantile")) +
+  tm_view(set_zoom_limits = c(11,14))
 ```
+
+This map visualises how many bus trips occur within each hexagonal zone, based on aggregated counts from nearby bus stops. Darker colours represent higher passenger volumes, while lighter colours represent lower volumes.
+
+1\. Overall Spatial Pattern
+
+A. A Continuous High-Demand Corridor (Dark Blues)
+
+A prominent high-density travel spine stretches across Singapore from west → central → east
+
+This is the primary commuting corridor, home to large housing estates, employment centres, and MRT/bus interchanges.
+
+2\. Strong Residential Heartland Trip Activity
+
+Many hexagons surrounding large HDB towns show moderate to high trip intensity:
+
+-   Woodlands
+
+-   Yishun
+
+-   Sengkang / Punggol
+
+-   Ang Mo Kio
+
+-   Toa Payoh
+
+-   Bukit Panjang
+
+-   Choa Chu Kang
+
+This reflects the daily movement of residents travelling to work, school, and transit hubs.
+
+3\. Major Transport Nodes = Highest Trip Concentration
+
+The darkest hexagons (highest values, 38,497 – 415,907 trips) cluster around:
+
+-   Jurong East Interchange
+
+-   Woodlands Interchange
+
+-   Bedok Interchange
+
+-   Tampines Interchange
+
+-   Hougang / Sengkang Interchange
+
+-   Kallang / Paya Lebar / Geylang corridor
+
+-   Bukit Merah / Queenstown areas
+
+These zones are transfer hubs, explaining extremely high ridership.
+
+Low-Demand or Unserved Areas (Light Grey)
+
+Grey hexagons indicate missing or extremely low trip counts, typically corresponding to:
+
+-   Industrial zones (Tuas, Jurong Island)
+
+-   Protected natural areas (Mandai, Central Catchment)
+
+-   Ports / restricted areas
+
+These regions naturally have few or no bus stops.
+
+**The Map Tells Us About Singapore’s Bus Mobility**
+
+\(1\) Demand is not evenly distributed
+
+Trip volumes strongly concentrate around central transport infrastructure and major residential hubs.
+
+\(2\) The east–west urban corridor dominates
+
+This reflects Singapore’s overall population and workplace layout.
+
+\(3\) Bus usage supports both first–last mile and major commuter flows
+
+High activity near MRT lines indicates heavy intermodal interchange usage.
+
+\(4\) Polycentric clusters exist
+
+Multiple independent activity centers — Woodlands, Tampines, Jurong East — form clear hotspots.
+
+## Display the geographical distribution of the passenger trips aggregation by different period using Geovisualisation
 
 ```{r}
 tmap_mode("plot")
@@ -473,7 +511,6 @@ tm_shape(hex_agg) +
     main.title = "Passenger Trips by Hexagon (Aggregated to Peak Windows)",
     legend.outside = TRUE
   )
-
 ```
 
 ## 2.5.5 Describe the spatial patterns revealed by the geovisualisation
@@ -500,7 +537,29 @@ tm_shape(hex_agg) +
 
 2.Central and eastern residential areas still register strong demand, but the overall intensity is lower than weekday peaks.
 
-3.This indicates non-work-related mobility, such as leisure, family, and retail trips, dominating the weekend pattern.\
+3.This indicates non-work-related mobility, such as leisure, family, and retail trips, dominating the weekend pattern.
+
+The map reveals:
+
+\(1\) Singapore’s core mobility spine
+
+A central high-demand band runs from Jurong East → Buona Vista → Queenstown → Bukit Merah → Kallang → Geylang → Tampines.
+
+\(2\) Residential → Employment Flow
+
+Morning peaks show strong activity from suburbs to city, reflecting typical daily commuting.
+
+\(3\) Leisure Shift on Weekends
+
+Weekend patterns move towards city malls, waterfronts, and recreation nodes.
+
+\(4\) Transport Interchanges = Trip Magnets
+
+Almost all major interchanges appear as dark hotspots across all periods.
+
+\(5\) Spatial consistency
+
+Many high-flow hexagons remain consistent across all times — these are Singapore’s permanent “mobility anchors”.\
 
 # 2.6 **Local Measures of Spatial Association (LMSA) Analysis**
 
@@ -513,7 +572,7 @@ set.seed(1234)
 ```
 
 ```{r}
-mpsz_trips
+colnames(mpsz_trips)
 ```
 
 ```{r}
@@ -592,21 +651,17 @@ tm_shape(lisa) +
   tm_title("Loal Morans'I of TOTAL_TRIPS (Queen's method)")
 ```
 
-**local** version of Moran’s I, showing where clustering occurs instead of giving one single global number.
+local version of Moran’s I, showing where clustering occurs instead of giving one single global number.
 
-**Queen’s contiguity** rule, so neighbors share either a border or a corner.
+Queen’s contiguity rule, so neighbors share either a border or a corner.
 
--   **Blue clusters** → Areas where passenger trips are **spatially clustered** (e.g., CBD, Tampines, Punggol, Jurong West).
+-   Blue clusters → Areas where passenger trips are spatially clustered (e.g., CBD, Tampines, Punggol, Jurong West).
 
 -   These indicate consistent travel intensity across neighboring subzones. Example: High Moran’s I in central or northeast Singapore → dense bus ridership areas.
 
-<!-- -->
+-   Orange polygons → Spatial outliers (values very different from neighbors). Example: Industrial or coastal subzones (e.g., Tuas, Changi) — low trips surrounded by higher ones.
 
--   **Orange polygons** → **Spatial outliers** (values very different from neighbors). Example: Industrial or coastal subzones (e.g., Tuas, Changi) — low trips surrounded by higher ones.
-
-<!-- -->
-
--   **Pale neutral areas (0–2)** → Random or weak correlation; no clear spatial pattern
+-   Pale neutral areas (0–2) → Random or weak correlation; no clear spatial pattern
 
 ```{r}
 tm_shape(lisa) +
@@ -621,23 +676,13 @@ tm_shape(lisa) +
   tm_title("p-values of Loal Moran's I of TOTAL_TRIPS (Queen's method)")
 ```
 
--   **Dark red regions** — These subzones show very strong evidence (p \< 0.001 or 0.01) of spatial clustering of similar trip values.\
+-   Dark red regions — These subzones show very strong evidence (p \< 0.001 or 0.01) of spatial clustering of similar trip values.\
     → These are statistically significant hot/cold clusters.\
     For example, central Singapore (CBD, Toa Payoh, Bukit Merah) or dense residential zones (Tampines, Punggol) may appear dark red.
-
-<!-- -->
-
--   **Medium/light red (0.01–0.05)** — These are moderate-confidence clusters — still likely to be meaningful, but not as robust.
-
-<!-- -->
-
--   **Yellowish or pale areas (\>0.05)** — These subzones do not exhibit significant local spatial correlation.\
+-   Medium/light red (0.01–0.05) — These are moderate-confidence clusters — still likely to be meaningful, but not as robust.
+-   Yellowish or pale areas (\>0.05) — These subzones do not exhibit significant local spatial correlation.\
     → Trip patterns there may fluctuate randomly (e.g., low-demand or fringe industrial areas such as Tuas or Changi).
-
-<!-- -->
-
--   **Spatial distribution pattern** —\
-    The presence of large red patches across the city suggests that trip volumes are not randomly distributed, but rather spatially structured, with clear regional clustering (high ridership in the east/central, lower in west/industrial zones).
+-   Spatial distribution pattern — The presence of large red patches across the city suggests that trip volumes are not randomly distributed, but rather spatially structured, with clear regional clustering (high ridership in the east/central, lower in west/industrial zones).
 
 ```{r}
 ii.map <- tm_shape(lisa) +
@@ -842,6 +887,8 @@ HCSA_fdw <- hex_agg_clean_fdw %>%
 ```
 
 ```{r}
+tm_shape(mpsz)+
+  tm_polygons() +
 tm_shape(HCSA_fdw) +
   tm_polygons(fill = "gi_star",
               fill.scale = tm_scale_intervals(
@@ -855,18 +902,20 @@ tm_shape(HCSA_fdw) +
   tm_title("Gi* of TOTAL_TRIPS (Fixed Bandwidth d = 750m)")
 ```
 
-The **Getis-Ord Gi\*** statistic identifies *local spatial clusters* of high or low values by comparing each hexagon’s value to its neighbors.
+The Getis-Ord Gi\* statistic identifies local spatial clusters of high or low values by comparing each hexagon’s value to its neighbors.
 
--   **High Gi\*** (positive, dark blue):\
-    The hexagon and its neighbors all have *high TOTAL_TRIPS* → a hot spot.
+-   High Gi\* (positive, dark blue):\
+    The hexagon and its neighbors all have high TOTAL_TRIPS → a hot spot.
 
--   **Low Gi\*** (negative, orange/red):\
-    The hexagon and its neighbors all have *low TOTAL_TRIPS* → a cold spot.
+-   Low Gi\* (negative, orange/red):\
+    The hexagon and its neighbors all have low TOTAL_TRIPS → a cold spot.
 
--   **Near 0 Gi\*** (light colors):\
-    No significant clustering → values are *spatially random* or transitional.
+-   Near 0 Gi\* (light colors):\
+    No significant clustering → values are spatially random or transitional.
 
 ```{r}
+tm_shape(mpsz)+
+  tm_polygons() +
 tm_shape(HCSA_fdw) +
   tm_polygons(fill = "p_sim", 
               fill.scale = tm_scale_intervals(
@@ -885,7 +934,8 @@ tm_shape(HCSA_fdw) +
 -   **Central areas** (greyish or light pink) have higher p-values (\> 0.05) → their clustering is not statistically significant — meaning bus trip density there is more mixed or random.
 
 ```{r}
-Gi_star_map <- tm_shape(HCSA_fdw) +
+Gi_star_map <- tm_shape(mpsz)+
+  tm_polygons() + tm_shape(HCSA_fdw) +
   tm_polygons(fill = "gi_star",
               fill.scale = tm_scale_intervals(
                 style = "pretty",
@@ -898,7 +948,8 @@ Gi_star_map <- tm_shape(HCSA_fdw) +
   tm_borders(fill_alpha = 0.5) +
   tm_title("Local Gi* of TOTAL_TRIPS")
 
-p_values_map <- tm_shape(HCSA_fdw) +
+p_values_map <- tm_shape(mpsz)+
+  tm_polygons() + tm_shape(HCSA_fdw) +
   tm_polygons(fill = "p_sim", 
               fill.scale = tm_scale_intervals(
                 breaks = c(0, 0.001, 0.01, 0.05, 0.1, 1),
@@ -929,7 +980,8 @@ HCSA_fdw <- HCSA_fdw %>%
 ```
 
 ```{r}
-HCSA_map <- tm_shape(HCSA_fdw) + 
+HCSA_map <- tm_shape(mpsz)+
+  tm_polygons() + tm_shape(HCSA_fdw) + 
   tm_polygons(
     fill = "HCSA_cluster",
     fill.scale = tm_scale_categorical(
@@ -948,29 +1000,11 @@ HCSA_map <- tm_shape(HCSA_fdw) +
 HCSA_map
 ```
 
--   **Red (Hot Spot)** → “High-High” cluster: areas where **high TOTAL_TRIPS values** are surrounded by other **high values**.
+-   Red (Hot Spot) → “High-High” cluster: areas where high TOTAL_TRIPS values are surrounded by other high values.
 
--   **Blue (Cold Spot)** → “Low-Low” cluster: areas where **low TOTAL_TRIPS values** are surrounded by **low values**.
+-   Blue (Cold Spot) → “Low-Low” cluster: areas where low TOTAL_TRIPS values are surrounded by low values.
 
--   **Grey (Insignificant)** → not statistically significant; no clear spatial pattern (random variation).
-
-```         
-**Hot spots (red)** form around:
-
-The north (Woodlands–Yishun corridor)
-
-The west (Jurong West and Tuas industrial belt)
-
-The east (Tampines–Pasir Ris region)\
-These are major residential and transit hubs, indicating zones of concentrated trip activity and strong public-transport demand.
-
-**Cold spots (blue)** dominate:
-
-Peripheral or less populated areas such as Lim Chu Kang, western coastlines, and Changi Coast\
-These reflect zones of low trip density, likely industrial or restricted-access regions with minimal commuter flow.
-
-**Central areas (grey)** show insignificant clustering — trip patterns there are mixed or transitional, with both high- and low-density hexagons interspersed.
-```
+-   Grey (Insignificant) → not statistically significant; no clear spatial pattern (random variation).
 
 ```{r}
 tmap_arrange(Gi_star_map, HCSA_map, asp=1, ncol=2)
@@ -981,7 +1015,129 @@ tmap_arrange(Gi_star_map, HCSA_map, asp=1, ncol=2)
 ## 2.7.1 Creating Space Time Cube
 
 ```{r}
-#start
+trips_period_1 <- trips %>%
+  mutate(
+    is_weekday = DAY_TYPE %in% c("WEEKDAY", "Weekday"),
+    period = case_when(
+      is_weekday & dplyr::between(HOUR_OF_DAY, 6, 8) ~ "Weekday morning peak",
+      is_weekday & dplyr::between(HOUR_OF_DAY, 17, 19) ~ "Weekday afternoon peak",
+      !is_weekday & dplyr::between(HOUR_OF_DAY, 11, 19) ~ "Weekend/holiday",
+      TRUE ~ NA_character_
+    ),
+    bus_tap_on_time = case_when(
+      period == "Weekday morning peak" ~ "6am–9am",
+      period == "Weekday afternoon peak" ~ "5pm–8pm",
+      period == "Weekend/holiday" ~ "11am–8pm",
+      TRUE ~ NA_character_
+    )
+  ) %>%
+  filter(!is.na(period)) %>%
+  group_by(HEX_ID, period, bus_tap_on_time, HOUR_OF_DAY) %>%   # <- HOUR_OF_DAY included here
+  summarise(TOTAL_TRIPS = sum(TRIPS), .groups = "drop")
+
+
+```
+
+```{r}
+head(trips_period_1)
+```
+
+```{r}
+hex_agg_1 <- hexagon %>%
+  left_join(trips_period_1, by = "HEX_ID")
+```
+
+```{r}
+hex_agg_1
+```
+
+```{r}
+hex_agg_2 <- hex_agg_1 %>%
+  mutate(
+    time_id = factor(
+      HOUR_OF_DAY,
+      levels = sort(unique(HOUR_OF_DAY)),
+      ordered = TRUE
+    )
+  )
+
+hex_attr <- hex_agg_2 %>%
+  st_drop_geometry() %>%
+  tidyr::complete(HEX_ID, time_id, fill = list(TOTAL_TRIPS = 0))
+
+hex_geom <- hex_agg_2 %>%
+  select(HEX_ID, geometry) %>%
+  distinct(HEX_ID, .keep_all = TRUE)
+
+```
+
+```{r}
+hex_attr_clean <- hex_agg_2 %>%
+  st_drop_geometry() %>%
+  filter(!is.na(HEX_ID), !is.na(time_id)) %>%        
+  distinct(HEX_ID, time_id, .keep_all = TRUE) %>%   
+  tidyr::complete(
+    HEX_ID, time_id, 
+    fill = list(TOTAL_TRIPS = 0)
+  )
+```
+
+```{r}
+hex_geom_clean <- hex_agg_2 %>%
+  select(HEX_ID, geometry) %>%
+  filter(!is.na(HEX_ID)) %>%           
+  filter(!st_is_empty(geometry)) %>%   
+  distinct(HEX_ID, .keep_all = TRUE)   
+```
+
+```{r}
+hex_geom_clean
+```
+
+```{r}
+hex_attr_clean_1 <- hex_attr_clean %>% group_by(HOUR_OF_DAY)
+```
+
+```{r}
+hex_attr_clean_1
+```
+
+```{r}
+trips_st_1 <- spacetime(
+  hex_attr_clean,
+  hex_geom_clean,
+  .loc_col  = "HEX_ID",
+  .time_col = "time_id"
+)
+
+```
+
+```{r}
+is_spacetime_cube(trips_st_1)
+```
+
+```{r}
+head(trips_st_1)
+```
+
+```{r}
+hex_geom
+```
+
+## 2.7.2 Computing Gi\*
+
+```{r}
+trips_nb <- trips_st_1 %>%
+  activate("geometry") %>%
+  mutate(nb = include_self(
+    st_contiguity(geometry)),
+    wt = st_inverse_distance(nb, 
+                             geometry, 
+                             scale = 1,
+                             alpha = 1),
+    .before = 1) %>%
+  set_nbs("nb") %>%
+  set_wts("wt")
 ```
 
 ```{r}
@@ -992,8 +1148,9 @@ missing_hex <- mpsz_trips_clean %>%
   filter(n_periods < length(levels(mpsz_trips_clean$bus_tap_on_time)))
 
 missing_hex
-
 ```
+
+No missing hex id
 
 ```{r}
 mpsz_trips_clean_filtered <- mpsz_trips_clean %>%
@@ -1020,14 +1177,11 @@ mpsz_trips_clean %>%
 ```
 
 ```{r}
-#c
 mpsz_trips_complete <- mpsz_trips_clean_filtered %>%
-  tidyr::expand(HEX_ID, bus_tap_on_time) %>%     # all HEX–time combinations
+  tidyr::expand(HEX_ID, bus_tap_on_time) %>%     
   left_join(mpsz_trips_clean, by = c("HEX_ID", "bus_tap_on_time")) %>%
   mutate(TOTAL_TRIPS = replace_na(TOTAL_TRIPS, 0)) %>%
-  # bring geometry from hexagon (spatial grid)
   left_join(st_drop_geometry(hexagon), by = "HEX_ID") %>%
-  # 🔹 convert to sf explicitly
   st_as_sf(crs = st_crs(hexagon))
 ```
 
@@ -1036,19 +1190,12 @@ class(mpsz_trips_complete)
 ```
 
 ```{r}
+
+head(mpsz_trips_complete)
 ```
 
 ```{r}
 
-mpsz_trips_complete
-```
-
-```{r}
-hexagon
-```
-
-```{r}
-# Convert to an ordered factor (morning < afternoon < weekend)
 mpsz_trips_complete <- mpsz_trips_complete %>%
   mutate(
     bus_tap_on_time = factor(
@@ -1058,7 +1205,7 @@ mpsz_trips_complete <- mpsz_trips_complete %>%
     )
   )
 
-# Now run spacetime()
+
 trips_st <- spacetime(
   mpsz_trips_complete,   # data with time variable
   hexagon,            # geometry sf object
@@ -1075,13 +1222,6 @@ is_spacetime_cube(trips_st)
 ```{r}
 class(mpsz_trips_complete)
 ```
-
-```{r}
-
-
-```
-
-`{)}`
 
 ## 2.7.2 Computing Gi\*
 
@@ -1275,33 +1415,33 @@ ehsa <- emerging_hotspot_analysis(
 
 ![](images/clipboard-1934353918.png)
 
-Short Analysis:
+EHSA Analysis:
 
-The EHSA map reveals spatial–temporal patterns of bus stop usage across Singapore. Each bus stop is classified into hotspot types (e.g., consecutive, sporadic, oscillating) based on **Total Trip volumes** across three time slices:\
-**Morning Peak (6–9 am)**, **Evening Peak (5–8 pm)**, and **Weekend/Holiday (11 am–8 pm)**.
+The EHSA map reveals spatial–temporal patterns of bus stop usage across Singapore. Each bus stop is classified into hotspot types (e.g., consecutive, sporadic, oscillating) based on Total Trip volumes across three time slices:\
+Morning Peak (6–9 am), Evening Peak (5–8 pm), and Weekend/Holiday (11 am–8 pm).
 
-#### 🔴 Key Hotspot Observations
+Key Hotspot Observations
 
-**Consecutive Hotspots** are concentrated in **downtown and transport hubs** such as **Marina Bay, Orchard, Tampines, Jurong East, and Woodlands Interchange**, indicating persistently high ridership across all time periods.
+Consecutive Hotspots are concentrated in downtown and transport hubs such as Marina Bay, Orchard, Tampines, Jurong East, and Woodlands Interchange, indicating persistently high ridership across all time periods.
 
-**Sporadic Hotspots** appear near **neighbourhood commercial centres** (e.g., Hougang, Punggol, Clementi), where passenger volumes spike only during specific periods—typically evening or weekends.
+Sporadic Hotspots appear near neighbourhood commercial centres (e.g., Hougang, Punggol, Clementi), where passenger volumes spike only during specific periods—typically evening or weekends.
 
-**Oscillating Hotspots** are found in mixed-use districts (e.g., Buona Vista, One-North) that show alternating patterns between high and moderate activity.
+Oscillating Hotspots are found in mixed-use districts (e.g., Buona Vista, One-North) that show alternating patterns between high and moderate activity.
 
-#### 🔵 Cold Spot Trends
+Cold Spot Trends
 
-**Consecutive Coldspots** occur mainly in **low-density residential or industrial areas**, such as **Tuas, Seletar West, and Lim Chu Kang**, suggesting consistently low trip counts.
+Consecutive Coldspots occur mainly in low-density residential or industrial areas, such as Tuas, Seletar West, and Lim Chu Kang, suggesting consistently low trip counts.
 
-**Sporadic Coldspots** near urban fringes indicate time-dependent inactivity, possibly linked to limited service frequency or workday-only commuting patterns.
+Sporadic Coldspots near urban fringes indicate time-dependent inactivity, possibly linked to limited service frequency or workday-only commuting patterns.
 
-#### 🧭 Interpretation
+Interpretation
 
-The spatial clustering of hotspots mirrors Singapore’s **polycentric urban structure**—major employment and interchange nodes sustain consistent demand, while suburban and industrial zones show periodic variation. This pattern suggests a mature, hub-and-spoke ridership model shaped by work–home flows and weekend leisure travel.
+The spatial clustering of hotspots mirrors Singapore’s polycentric urban structure—major employment and interchange nodes sustain consistent demand, while suburban and industrial zones show periodic variation. This pattern suggests a mature, hub-and-spoke ridership model shaped by work–home flows and weekend leisure travel.
 
-#### 💡 Policy & Planning Insights
+Policy & Planning Insights
 
-**Sustained hotspots** warrant continued capacity support and crowd management measures.
+Sustained hotspots warrant continued capacity support and crowd management measures.
 
-**Sporadic or oscillating zones** could benefit from **dynamic scheduling** or **demand-responsive routing**.
+Sporadic or oscillating zones could benefit from dynamic scheduling or demand-responsive routing.
 
-**Persistent coldspots** may signal over-servicing or potential areas for route optimization.
+Persistent coldspots may signal over-servicing or potential areas for route optimization.
